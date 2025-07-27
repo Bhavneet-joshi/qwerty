@@ -1,0 +1,38 @@
+Home Page:
+The previous light theme for the Home Page was better. Please revamp the page to remove and update the required elements, as previously guided, while retaining the theme.
+For the dark theme, please apply the same alignment used in the light theme.
+The design will be approved once the aforementioned issues are addressed and the updated files have been re-uploaded.
+Navbar and Footer:
+Navbar:
+The navbar is not displaying any dropdown menus as specified in the UI section of the Statement of Work (SOW), despite the reference design being provided.
+Why does the navbar include Login and Register buttons across all dashboards?
+Why does the navbar not display different options before and after login?
+Please redesign the navbar to incorporate a dropdown with hover effects and display different options based on the user's login type.
+The design will be approved once the aforementioned issues are addressed and the updated files have been re-uploaded.
+Footer:
+Please retain the previous footer design, as the new version does not present well.
+Why is the footer not included on protected pages?
+Also include a site map in the footer. Instead of listing individual services, it should contain specific items, which will be shared once a few fully compliant designs are submitted.
+The design will be approved once the aforementioned issues are addressed and the updated files have been re-uploaded.
+Contact us Page:
+Please retain the previous Contact us page design, you were clearly guided to just include how map will look like in the given design. Can you please clarify why the whole page was revamped?
+The design will be approved once the aforementioned issues are addressed and the updated files have been re-uploaded. 
+Services Page and Service Specific Pages:
+This page cannot be designed unless specific information is provided to you. Could you please clarify why you have not requested the necessary details required for its design?
+A ‘Learn More’ link is included for the listed services; however, no corresponding designs for service-specific pages have been provided. Could you please clarify?
+The design will be approved once the aforementioned issues are addressed and the updated files have been re-uploaded.
+About Us Pages: No designs have been provided for these pages, despite earlier feedback being shared. Could you please clarify the reason for this omission?
+Policy Page: 
+As previously guided, you were only required to expand the policy horizontally. Could you please clarify why the entire design has been revamped?
+ The design will be approved once the aforementioned issues are addressed and the updated files have been re-uploaded.
+Register View and Flow:
+Could you please clarify why the entire design has been revamped, despite clear feedback to only correct the flow and required fields? The color scheme had been explicitly communicated as satisfactory.
+Could you also clarify why only Steps 1 and 2 were uploaded, and not all five steps?
+Could you please clarify why the error message screen was not uploaded as well?
+The design will be approved once the aforementioned issues are addressed and the updated files have been re-uploaded.
+Login View and Flow:
+Could you please align the theme with register views.
+Furthermore, could you please clarify why the ‘Forgot Password’ page was not uploaded?
+Could you also please clarify why the OTP pages have not been shared, despite being clearly specified in Clause 3.3 of the Statement of Work (SOW) under the 'Authentication and Authorization – Employees' section?
+The design will be approved once the aforementioned issues are addressed and the updated files have been re-uploaded.
+

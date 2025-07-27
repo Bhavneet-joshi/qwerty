@@ -61,6 +61,13 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+        // Custom HLSG colors
+        navyblue: "var(--navyblue)",
+        goldenrod1: "var(--goldenrod1)",
+        goldenrod2: "var(--goldenrod2)",
+        darkblue: "var(--darkblue)",
+        golden: "var(--golden)",
+        graycustom: "var(--graycustom)",
       },
       keyframes: {
         "accordion-down": {

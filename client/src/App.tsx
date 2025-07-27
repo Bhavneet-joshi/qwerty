@@ -3,17 +3,22 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { useAuth } from "@/hooks/useAuth";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
+import Login from "@/pages/Login";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
+import AboutFounders from "@/pages/about/AboutFounders";
+import AboutCompany from "@/pages/about/AboutCompany";
 import Services from "@/pages/Services";
 import Contact from "@/pages/Contact";
 import Policy from "@/pages/Policy";
 import Register from "@/pages/Register";
 
 // Client pages
+import Layout from "@/components/Layout";
 import ClientDashboard from "@/pages/client/Dashboard";
 import ClientProfile from "@/pages/client/Profile";
 import ClientContracts from "@/pages/client/Contracts";
@@ -49,7 +54,10 @@ function Router() {
       {!isAuthenticated ? (
         <>
           <Route path="/" component={Landing} />
+          <Route path="/login" component={Login} />
           <Route path="/about" component={About} />
+          <Route path="/about/founders" component={AboutFounders} />
+          <Route path="/about/company" component={AboutCompany} />
           <Route path="/services" component={Services} />
           <Route path="/contact" component={Contact} />
           <Route path="/policy" component={Policy} />
@@ -57,38 +65,37 @@ function Router() {
         </>
       ) : (
         <>
-          <Route path="/" component={Home} />
-          
           {/* Client routes */}
-          {user?.role === 'client' && (
-            <>
+          {(user as any)?.role === 'client' && (
+            <Layout>
+              <Route path="/" component={ClientDashboard} />
               <Route path="/dashboard" component={ClientDashboard} />
               <Route path="/profile" component={ClientProfile} />
               <Route path="/contracts" component={ClientContracts} />
               <Route path="/contracts/:id" component={ClientContractView} />
-            </>
+            </Layout>
           )}
           
           {/* Employee routes */}
-          {user?.role === 'employee' && (
-            <>
-              <Route path="/dashboard" component={EmployeeDashboard} />
-              <Route path="/profile" component={EmployeeProfile} />
-              <Route path="/contracts" component={EmployeeContracts} />
-              <Route path="/contracts/:id" component={EmployeeContractSpecific} />
-            </>
+          {(user as any)?.role === 'employee' && (
+            <Layout>
+              <Route path="/" component={ClientDashboard} />
+              <Route path="/dashboard" component={ClientDashboard} />
+              <Route path="/profile" component={ClientProfile} />
+              <Route path="/contracts" component={ClientContracts} />
+              <Route path="/contracts/:id" component={ClientContractView} />
+            </Layout>
           )}
           
           {/* Admin routes */}
-          {user?.role === 'admin' && (
-            <>
-              <Route path="/dashboard" component={AdminDashboard} />
-              <Route path="/profile" component={AdminProfile} />
-              <Route path="/contracts" component={AdminContracts} />
-              <Route path="/contracts/:id" component={AdminContractSpecific} />
-              <Route path="/contracts/new" component={AdminNewContract} />
-              <Route path="/users" component={AdminUserManagement} />
-            </>
+          {(user as any)?.role === 'admin' && (
+            <Layout>
+              <Route path="/" component={ClientDashboard} />
+              <Route path="/dashboard" component={ClientDashboard} />
+              <Route path="/profile" component={ClientProfile} />
+              <Route path="/contracts" component={ClientContracts} />
+              <Route path="/contracts/:id" component={ClientContractView} />
+            </Layout>
           )}
         </>
       )}
@@ -101,10 +108,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <ThemeProvider defaultTheme="light" storageKey="hlsg-theme">
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

@@ -56,6 +56,16 @@
   --destructive-foreground: hsl(0, 0%, 98%);
   --ring: hsl(240, 4.9%, 83.9%);
   --radius: 0.5rem;
+  
+  /* Custom HLSG colors in dark mode */
+  --navyblue: hsl(240, 100%, 35%);
+  --goldenrod1: hsl(43, 87%, 54%);
+  --goldenrod2: hsl(43, 74%, 59%);
+  --darkblue: hsl(240, 100%, 44%);
+  --golden: hsl(51, 100%, 60%);
+  --black: hsl(0, 0%, 0%);
+  --graycustom: hsl(0, 0%, 70%);
+  --white: hsl(0, 0%, 100%);
 }
 
 @layer base {

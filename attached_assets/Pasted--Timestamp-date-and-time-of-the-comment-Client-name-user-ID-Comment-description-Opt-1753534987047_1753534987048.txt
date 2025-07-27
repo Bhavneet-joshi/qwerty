@@ -1,0 +1,56 @@
+• Timestamp (date and time of the comment).
+• Client name (user ID).
+• Comment description.
+• Option to mark the comment as resolved.
+• Options to edit or delete the comment.
+Employee Login:
+Profile Page This page shall display employee details such as name, PAN,
+Aadhaar number, contact information, address, employee ID,
+profile photo, and option to request a password change to admin.
+Dashboard This page shall display a simple counter indicating the number of
+agreements assigned to the employee. It shall also include a list of
+the five most recent agreements assigned to the employee in
+chronological order each with link to its “Contract Page”.
+Additionally, the page shall provide a link to the “List of
+Contracts Page”.
+List of
+Contracts Page
+This page shall display a list of contracts assigned to that
+employee based on the access provided by Admin. It shall contain
+contract name, description, contract date, contract period, and
+option to view “Contract Page” (specific to that contract). It shall
+allow to filtering of contracts based on client name, date wise or
+period wise.
+Contract
+Specific Page
+This page is unique to each contract and contains all relevant
+contract details, such as the name, description, date, and
+duration. It also includes various action buttons, such as:
+• Edit contract.
+• Reply to client comments.
+• Add new comments to any line.
+• Open online.
+• Open on desktop.
+• Delete contract.
+• Add new lines to the contract document.
+These actions are available based on the permissions set by the
+admin.
+Admin Login:
+Profile Page This page shall display employee details such as name, PAN,
+Aadhaar number, contact information, address, profile photo,
+change password option.
+Dashboard This page shall display a counter showing the total number of
+contracts the company has. It will also feature multiple counters
+indicating the number of contracts categorized by client, by
+employee, by status (open/in progress), and by status (closed—
+either delivered or cancelled). Additionally, it shall include lists of
+the five most recent contracts sorted by date, contract value, and
+contract duration.
+List of
+Contracts Page
+This page shall display a list of all company contracts, including
+details such as the contract name, description, date, and duration.
+Each entry shall include a button to view the full contract details.
+The page shall also allow users filtering of contracts by client
+name, date, or contract duration. This page shall also include a
+button to the “New Contract Pag

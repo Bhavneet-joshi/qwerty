@@ -2,6 +2,8 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import contractRoutes from "./routes/contracts";
+import { setupMockAuth } from "./routes/mockAuth";
 import { z } from "zod";
 import {
   insertContractSchema,
@@ -14,6 +16,12 @@ import {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
+  
+  // Mock authentication for demo
+  setupMockAuth(app);
+  
+  // Contract routes
+  app.use(contractRoutes);
 
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {

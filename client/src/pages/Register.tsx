@@ -11,10 +11,18 @@ import PublicLayout from "@/components/PublicLayout";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { registerUserSchema } from "@shared/schema";
+import { insertUserSchema } from "@shared/schema";
 import { z } from "zod";
 import { ChevronLeft, ChevronRight, User, FileText, Shield, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+
+const registerUserSchema = insertUserSchema.extend({
+  confirmPassword: z.string().min(8, "Password must be at least 8 characters"),
+  panNumber: z.string().length(10, "PAN number must be 10 characters"),
+  aadhaarNumber: z.string().length(12, "Aadhaar number must be 12 digits"),
+  contactNumber: z.string().min(10, "Contact number must be at least 10 digits"),
+  address: z.string().min(10, "Address must be at least 10 characters"),
+});
 
 type RegisterFormData = z.infer<typeof registerUserSchema>;
 
@@ -32,6 +40,7 @@ export default function Register() {
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerUserSchema),
     defaultValues: {
+      id: "",
       firstName: "",
       lastName: "",
       email: "",
@@ -141,7 +150,7 @@ export default function Register() {
                             <FormItem>
                               <FormLabel>First Name</FormLabel>
                               <FormControl>
-                                <Input placeholder="John" {...field} />
+                                <Input placeholder="John" {...field} value={field.value || ""} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -154,7 +163,7 @@ export default function Register() {
                             <FormItem>
                               <FormLabel>Last Name</FormLabel>
                               <FormControl>
-                                <Input placeholder="Doe" {...field} />
+                                <Input placeholder="Doe" {...field} value={field.value || ""} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -169,7 +178,7 @@ export default function Register() {
                           <FormItem>
                             <FormLabel>Email Address</FormLabel>
                             <FormControl>
-                              <Input type="email" placeholder="john@example.com" {...field} />
+                              <Input type="email" placeholder="john@example.com" {...field} value={field.value || ""} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
