@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProtectedLayout from "@/components/ProtectedLayout";
+
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
 import { 
@@ -123,11 +123,9 @@ export default function UserManagement() {
 
   if (isLoading) {
     return (
-      <ProtectedLayout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-navyblue"></div>
-        </div>
-      </ProtectedLayout>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-navyblue"></div>
+      </div>
     );
   }
 
@@ -185,8 +183,7 @@ export default function UserManagement() {
   };
 
   return (
-    <ProtectedLayout>
-      <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
@@ -472,6 +469,5 @@ export default function UserManagement() {
           )}
         </div>
       </div>
-    </ProtectedLayout>
   );
 }

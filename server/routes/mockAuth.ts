@@ -9,14 +9,33 @@ const loginSchema = z.object({
 
 export function setupMockAuth(app: Express) {
   // Mock login endpoint for demo purposes
-  app.post('/api/mock-login', async (req, res) => {
+  app.post('/api/mock-login', async (req: any, res) => {
     try {
       const { email, password } = loginSchema.parse(req.body);
       
       const user = await storage.authenticateUser(email, password);
       
       if (user) {
-        // In a real app, you'd set up a proper session
+        // Create a proper session for the mock user
+        req.session.passport = {
+          user: {
+            claims: {
+              sub: user.id,
+              email: user.email,
+              first_name: user.firstName,
+              last_name: user.lastName,
+              profile_image_url: user.profileImageUrl
+            }
+          }
+        };
+        
+        await new Promise((resolve, reject) => {
+          req.session.save((err: any) => {
+            if (err) reject(err);
+            else resolve(null);
+          });
+        });
+        
         res.json({
           success: true,
           user: {

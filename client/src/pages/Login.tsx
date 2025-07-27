@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,14 +8,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { z } from "zod";
-import { ChevronLeft, ChevronRight, LogIn, Shield, User, UserCheck, Smartphone } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogIn, Shield, User, UserCheck, Smartphone, Mail, Phone, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
-  otp: z.string().length(6, "OTP must be 6 digits"),
+  mobileOtp: z.string().length(6, "Mobile OTP must be 6 digits"),
+  emailOtp: z.string().length(6, "Email OTP must be 6 digits"),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -24,6 +25,116 @@ const steps = [
   { id: 1, title: "Credentials", icon: LogIn },
   { id: 2, title: "OTP Verification", icon: Shield }
 ];
+
+// Mobile OTP Input Component
+const MobileOTPInput = ({ value, onChange, disabled }: { value: string; onChange: (value: string) => void; disabled: boolean }) => {
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  
+  useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
+
+  const handleChange = (index: number, val: string) => {
+    if (!/^\d*$/.test(val)) return;
+    
+    const newValue = value.split('');
+    newValue[index] = val;
+    const newOTP = newValue.join('');
+    onChange(newOTP);
+    
+    if (val && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !value[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="text-center">
+        <div className="flex items-center justify-center mb-2">
+          <Phone className="w-5 h-5 text-green-600 mr-2" />
+          <span className="text-sm font-medium text-green-600">Mobile OTP</span>
+        </div>
+        <p className="text-xs text-muted-foreground">Enter the 6-digit code sent to your mobile</p>
+      </div>
+      <div className="flex justify-center space-x-2">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <Input
+            key={index}
+            ref={(el) => (inputRefs.current[index] = el)}
+            type="text"
+            maxLength={1}
+            value={value[index] || ''}
+            onChange={(e) => handleChange(index, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(index, e)}
+            disabled={disabled}
+            className="w-12 h-12 text-center text-lg font-semibold border-2 border-green-200 focus:border-green-500 bg-green-50 dark:bg-green-950"
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Email OTP Input Component
+const EmailOTPInput = ({ value, onChange, disabled }: { value: string; onChange: (value: string) => void; disabled: boolean }) => {
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  
+  useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
+
+  const handleChange = (index: number, val: string) => {
+    if (!/^\d*$/.test(val)) return;
+    
+    const newValue = value.split('');
+    newValue[index] = val;
+    const newOTP = newValue.join('');
+    onChange(newOTP);
+    
+    if (val && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !value[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="text-center">
+        <div className="flex items-center justify-center mb-2">
+          <Mail className="w-5 h-5 text-blue-600 mr-2" />
+          <span className="text-sm font-medium text-blue-600">Email OTP</span>
+        </div>
+        <p className="text-xs text-muted-foreground">Enter the 6-digit code sent to your email</p>
+      </div>
+      <div className="flex justify-center space-x-2">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <Input
+            key={index}
+            ref={(el) => (inputRefs.current[index] = el)}
+            type="text"
+            maxLength={1}
+            value={value[index] || ''}
+            onChange={(e) => handleChange(index, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(index, e)}
+            disabled={disabled}
+            className="w-12 h-12 text-center text-lg font-semibold border-2 border-blue-200 focus:border-blue-500 bg-blue-50 dark:bg-blue-950"
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const mockAccounts = {
   client: { email: "client@demo.com", password: "demo123", role: "Client" },
@@ -43,7 +154,8 @@ export default function Login() {
     defaultValues: {
       email: "",
       password: "",
-      otp: "",
+      mobileOtp: "",
+      emailOtp: "",
     }
   });
 
@@ -70,7 +182,7 @@ export default function Login() {
       return;
     }
 
-    // Simulate OTP sending
+    // Simulate OTP sending to both mobile and email
     setOtpSent(true);
     setCountdown(30);
     
@@ -85,8 +197,8 @@ export default function Login() {
     }, 1000);
 
     toast({
-      title: "OTP Sent",
-      description: `Verification code sent to ${email}`,
+      title: "OTPs Sent",
+      description: "Verification codes sent to your mobile and email",
     });
   };
 
@@ -107,8 +219,8 @@ export default function Login() {
         }
         break;
       case 2:
-        // Validate step 2: OTP
-        const step2Fields = await form.trigger(["otp"]);
+        // Validate step 2: Both Mobile and Email OTPs
+        const step2Fields = await form.trigger(["mobileOtp", "emailOtp"]);
         if (step2Fields && otpSent) {
           // Proceed with actual login
           await handleLogin();
@@ -116,7 +228,7 @@ export default function Login() {
         } else {
           toast({
             title: "OTP Required",
-            description: "Please enter the OTP sent to your email.",
+            description: "Please enter both mobile and email OTPs.",
             variant: "destructive",
           });
         }
@@ -154,9 +266,9 @@ export default function Login() {
           description: data.message,
         });
         
-        // Redirect to Replit Auth for actual authentication
+        // Redirect to dashboard after successful mock login
         setTimeout(() => {
-          window.location.href = "/api/login";
+          window.location.href = "/dashboard";
         }, 1000);
       } else {
         toast({
@@ -306,11 +418,11 @@ export default function Login() {
           <div className="space-y-6">
             <div className="text-center">
               <div className="w-16 h-16 bg-golden/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Smartphone className="h-8 w-8 text-golden" />
+                <Shield className="h-8 w-8 text-golden" />
               </div>
-              <h3 className="text-lg font-semibold text-navyblue dark:text-golden">OTP Verification</h3>
+              <h3 className="text-lg font-semibold text-navyblue dark:text-golden">Two-Factor Verification</h3>
               <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-                Enter the verification code sent to your email
+                Enter the verification codes sent to your mobile and email
               </p>
               <p className="text-sm font-medium text-navyblue dark:text-golden mt-1">
                 {form.getValues("email")}
@@ -318,40 +430,60 @@ export default function Login() {
             </div>
 
             <Form {...form}>
-              <FormField
-                control={form.control}
-                name="otp"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-navyblue dark:text-golden">Enter OTP</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        type="text"
-                        placeholder="Enter 6-digit OTP"
-                        maxLength={6}
-                        className={`border-gray-300 dark:border-gray-600 focus:border-golden dark:focus:border-golden text-center text-lg tracking-widest ${
-                          form.formState.errors.otp ? 'border-red-500 dark:border-red-500' : ''
-                        }`}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="space-y-6">
+                {/* Mobile OTP */}
+                <FormField
+                  control={form.control}
+                  name="mobileOtp"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <MobileOTPInput
+                          value={field.value}
+                          onChange={field.onChange}
+                          disabled={isLoading}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Email OTP */}
+                <FormField
+                  control={form.control}
+                  name="emailOtp"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <EmailOTPInput
+                          value={field.value}
+                          onChange={field.onChange}
+                          disabled={isLoading}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </Form>
 
             <div className="text-center">
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                Didn't receive the code?{" "}
+                Didn't receive the codes?{" "}
                 {countdown > 0 ? (
-                  <span className="text-gray-500">Resend in {countdown}s</span>
+                  <span className="text-gray-500 flex items-center justify-center">
+                    <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+                    Resend in {countdown}s
+                  </span>
                 ) : (
                   <button
                     onClick={sendOTP}
-                    className="font-medium text-golden hover:text-goldenrod1"
+                    className="font-medium text-golden hover:text-goldenrod1 flex items-center justify-center mx-auto"
                   >
-                    Resend OTP
+                    <RefreshCw className="w-3 h-3 mr-1" />
+                    Resend OTPs
                   </button>
                 )}
               </p>

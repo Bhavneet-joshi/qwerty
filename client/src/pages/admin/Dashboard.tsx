@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
-import ProtectedLayout from "@/components/ProtectedLayout";
+
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { 
   FileText, 
@@ -19,7 +19,8 @@ import {
   Plus,
   Eye,
   Building,
-  Calendar
+  Calendar,
+  Settings
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -61,11 +62,9 @@ export default function AdminDashboard() {
 
   if (isLoading || statsLoading) {
     return (
-      <ProtectedLayout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-navyblue"></div>
-        </div>
-      </ProtectedLayout>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-navyblue"></div>
+      </div>
     );
   }
 
@@ -103,8 +102,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <ProtectedLayout>
-      <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
@@ -476,6 +474,5 @@ export default function AdminDashboard() {
           </Card>
         </div>
       </div>
-    </ProtectedLayout>
   );
 }

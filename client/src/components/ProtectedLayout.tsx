@@ -18,13 +18,12 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
 
   const getNavItems = () => {
     const baseItems = [
-      { href: "/", label: "Home" },
       { href: "/dashboard", label: "Dashboard" },
       { href: "/profile", label: "Profile" },
       { href: "/contracts", label: "Contracts" },
     ];
 
-    if (user?.role === "admin") {
+    if ((user as any)?.role === "admin") {
       baseItems.push({ href: "/users", label: "User Management" });
     }
 
@@ -33,14 +32,14 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
 
   const NavLink = ({ href, label }: { href: string; label: string }) => (
     <Link href={href}>
-      <a
-        className={`px-3 py-2 text-sm font-medium transition-all duration-200 hover-nav ${
+      <span
+        className={`px-3 py-2 text-sm font-medium transition-all duration-200 hover-nav cursor-pointer ${
           location === href ? "text-navyblue" : "text-gray-700"
         }`}
         onClick={() => setIsMenuOpen(false)}
       >
         {label}
-      </a>
+      </span>
     </Link>
   );
 
@@ -52,12 +51,12 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link href="/">
-              <a className="flex items-center">
+              <span className="flex items-center cursor-pointer">
                 <div className="w-10 h-10 bg-gradient-to-r from-navyblue to-goldenrod1 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-xl">H</span>
                 </div>
                 <span className="ml-3 text-xl font-bold text-navyblue">HLSG Industries</span>
-              </a>
+              </span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -73,9 +72,9 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
+                      <AvatarImage src={(user as any)?.profileImageUrl || ""} alt={(user as any)?.firstName || ""} />
                       <AvatarFallback>
-                        {user?.firstName?.charAt(0) || "U"}
+                        {(user as any)?.firstName?.charAt(0) || "U"}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -133,6 +132,139 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
       <main className="pt-16">
         {children}
       </main>
+
+      {/* Footer */}
+      <footer className="bg-[#1e3557] dark:bg-[#1e3557] text-white relative">
+        {/* Social Media Bar */}
+        <div className="bg-[#1e3557] py-3">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <p className="text-sm">Get connected with us on social networks:</p>
+            <div className="flex space-x-3">
+              <a href="#" className="w-8 h-8 flex items-center justify-center hover:bg-white hover:text-[#1e3557] transition-colors">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                </svg>
+              </a>
+              <a href="#" className="w-8 h-8 flex items-center justify-center hover:bg-white hover:text-[#1e3557] transition-colors">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
+                </svg>
+              </a>
+              <a href="#" className="w-8 h-8 flex items-center justify-center hover:bg-white hover:text-[#1e3557] transition-colors">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Footer Content */}
+        <div className="py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Company Logo and Description */}
+              <div className="lg:col-span-1">
+                <div className="mb-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-r from-navyblue to-goldenrod1 rounded-lg flex items-center justify-center mr-3">
+                      <span className="text-white font-bold text-xl">H</span>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-white">HLSG INDUSTRIES</h3>
+                      <p className="text-xs text-gray-300">ACADEMY SERVICES FOR YOUR</p>
+                      <p className="text-xs text-orange-400">BUSINESS INTELLIGENCE</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-300 leading-relaxed">
+                    HLSG INDUSTRIES offers comprehensive contract management solutions and business intelligence services for enterprises. Our platform provides streamlined workflows for document management, stakeholder collaboration, and compliance tracking. Led by experienced professionals who focus on delivering excellence.
+                  </p>
+                </div>
+              </div>
+
+              {/* Quick Links */}
+              <div className="lg:col-span-1">
+                <h3 className="text-lg font-semibold text-white mb-6 uppercase">QUICK LINKS</h3>
+                <ul className="space-y-3">
+                  <li><Link href="/dashboard"><span className="text-gray-300 hover:text-orange-400 transition-colors duration-200 cursor-pointer text-sm">Careers</span></Link></li>
+                  <li><Link href="/profile"><span className="text-gray-300 hover:text-orange-400 transition-colors duration-200 cursor-pointer text-sm">Results</span></Link></li>
+                  <li><Link href="/contracts"><span className="text-gray-300 hover:text-orange-400 transition-colors duration-200 cursor-pointer text-sm">Prev</span></Link></li>
+                  <li><a href="#" className="text-gray-300 hover:text-orange-400 transition-colors duration-200 text-sm">Online Testing</a></li>
+                  <li><a href="#" className="text-gray-300 hover:text-orange-400 transition-colors duration-200 text-sm">About</a></li>
+                  <li><a href="#" className="text-gray-300 hover:text-orange-400 transition-colors duration-200 text-sm">Contact</a></li>
+                </ul>
+              </div>
+
+              {/* Contact */}
+              <div className="lg:col-span-1">
+                <h3 className="text-lg font-semibold text-white mb-6 uppercase">CONTACT</h3>
+                <div className="space-y-3 text-sm text-gray-300">
+                  <div>
+                    <p className="font-medium">123 Business Park,</p>
+                    <p>Sector 62, Noida</p>
+                    <p>Uttar Pradesh, India</p>
+                  </div>
+                  <div className="space-y-2">
+                    <p>contact@hlsgindustries.com</p>
+                    <p>+91 120 456 7890</p>
+                    <p>+91 120 456 7891</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Location on Map */}
+              <div className="lg:col-span-1">
+                <h3 className="text-lg font-semibold text-white mb-6 uppercase">LOCATION ON MAP</h3>
+                <div className="bg-gray-100 rounded-lg overflow-hidden h-48">
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center relative">
+                    {/* Google Maps-like interface */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-green-100 to-blue-100">
+                      {/* Streets overlay */}
+                      <div className="absolute inset-0 opacity-30">
+                        <div className="absolute top-4 left-0 w-full h-0.5 bg-gray-400"></div>
+                        <div className="absolute top-8 left-0 w-full h-0.5 bg-gray-400"></div>
+                        <div className="absolute top-16 left-0 w-full h-0.5 bg-gray-400"></div>
+                        <div className="absolute left-8 top-0 h-full w-0.5 bg-gray-400"></div>
+                        <div className="absolute left-16 top-0 h-full w-0.5 bg-gray-400"></div>
+                      </div>
+                      
+                      {/* Location marker */}
+                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        <div className="w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center">
+                          <div className="w-2 h-2 bg-white rounded-full"></div>
+                        </div>
+                      </div>
+                      
+                      {/* Map controls */}
+                      <div className="absolute top-2 right-2 flex flex-col space-y-1">
+                        <div className="w-6 h-6 bg-white rounded shadow flex items-center justify-center text-xs">+</div>
+                        <div className="w-6 h-6 bg-white rounded shadow flex items-center justify-center text-xs">-</div>
+                      </div>
+                      
+                      {/* View larger map link */}
+                      <div className="absolute bottom-2 right-2">
+                        <a href="#" className="text-xs bg-white px-2 py-1 rounded shadow text-blue-600 hover:underline">
+                          View larger map
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Copyright */}
+        <div className="border-t border-[#2a4a6b] py-4">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p className="text-sm text-gray-300">
+              © 2024 Copyright
+              <span className="font-semibold ml-1">HLSG Industries</span>
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

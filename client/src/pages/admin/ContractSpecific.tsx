@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import ProtectedLayout from "@/components/ProtectedLayout";
+
 import PDFViewer from "@/components/PDFViewer";
 import CommentSystem from "@/components/CommentSystem";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -201,11 +201,9 @@ export default function AdminContractSpecific() {
 
   if (isLoading || contractLoading) {
     return (
-      <ProtectedLayout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-navyblue"></div>
-        </div>
-      </ProtectedLayout>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-navyblue"></div>
+      </div>
     );
   }
 
@@ -215,25 +213,23 @@ export default function AdminContractSpecific() {
 
   if (!contract) {
     return (
-      <ProtectedLayout>
-        <div className="min-h-screen bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="text-center">
-              <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Contract Not Found</h1>
-              <p className="text-gray-600 mb-6">
-                The contract you're looking for doesn't exist.
-              </p>
-              <Link href="/contracts">
-                <Button className="btn-primary text-white">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Contracts
-                </Button>
-              </Link>
-            </div>
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center">
+            <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Contract Not Found</h1>
+            <p className="text-gray-600 mb-6">
+              The contract you're looking for doesn't exist.
+            </p>
+            <Link href="/contracts">
+              <Button className="btn-primary text-white">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Contracts
+              </Button>
+            </Link>
           </div>
         </div>
-      </ProtectedLayout>
+      </div>
     );
   }
 
@@ -285,8 +281,7 @@ export default function AdminContractSpecific() {
   };
 
   return (
-    <ProtectedLayout>
-      <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
@@ -742,6 +737,5 @@ export default function AdminContractSpecific() {
           </Tabs>
         </div>
       </div>
-    </ProtectedLayout>
   );
 }

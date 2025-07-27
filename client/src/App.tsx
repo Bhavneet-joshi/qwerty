@@ -21,6 +21,7 @@ import ForgotPassword from "@/pages/ForgotPassword";
 
 // Client pages
 import Layout from "@/components/Layout";
+import ProtectedLayout from "@/components/ProtectedLayout";
 import ClientDashboard from "@/pages/client/Dashboard";
 import ClientProfile from "@/pages/client/Profile";
 import ClientContracts from "@/pages/client/Contracts";
@@ -70,7 +71,7 @@ function Router() {
         <>
           {/* Admin routes */}
           {(user as any)?.role === 'admin' && (
-            <>
+            <ProtectedLayout>
               <Route path="/" component={AdminDashboard} />
               <Route path="/dashboard" component={AdminDashboard} />
               <Route path="/profile" component={AdminProfile} />
@@ -78,29 +79,29 @@ function Router() {
               <Route path="/users" component={UserManagement} />
               <Route path="/contracts/new" component={AdminNewContract} />
               <Route path="/contracts/:id" component={AdminContractSpecific} />
-            </>
+            </ProtectedLayout>
           )}
 
           {/* Employee routes */}
           {(user as any)?.role === 'employee' && (
-            <>
+            <ProtectedLayout>
               <Route path="/" component={EmployeeDashboard} />
               <Route path="/dashboard" component={EmployeeDashboard} />
               <Route path="/profile" component={EmployeeProfile} />
               <Route path="/contracts" component={EmployeeContracts} />
               <Route path="/contracts/:id" component={EmployeeContractSpecific} />
-            </>
+            </ProtectedLayout>
           )}
 
           {/* Client routes */}
           {(user as any)?.role === 'client' && (
-            <Layout>
+            <ProtectedLayout>
               <Route path="/" component={ClientDashboard} />
               <Route path="/dashboard" component={ClientDashboard} />
               <Route path="/profile" component={ClientProfile} />
               <Route path="/contracts" component={ClientContracts} />
               <Route path="/contracts/:id" component={ClientContractView} />
-            </Layout>
+            </ProtectedLayout>
           )}
         </>
       )}

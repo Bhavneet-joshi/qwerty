@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProtectedLayout from "@/components/ProtectedLayout";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -151,11 +151,9 @@ export default function AdminProfile() {
 
   if (isLoading) {
     return (
-      <ProtectedLayout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-navyblue"></div>
-        </div>
-      </ProtectedLayout>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-navyblue"></div>
+      </div>
     );
   }
 
@@ -172,8 +170,7 @@ export default function AdminProfile() {
   };
 
   return (
-    <ProtectedLayout>
-      <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Header */}
           <div className="mb-8">
@@ -610,6 +607,5 @@ export default function AdminProfile() {
           </Tabs>
         </div>
       </div>
-    </ProtectedLayout>
   );
 }
