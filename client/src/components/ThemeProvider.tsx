@@ -34,10 +34,21 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = window.document.documentElement;
+    const body = document.body;
+
+    // Add transition class for smooth theme switching
+    root.style.transition = 'color 0.3s ease, background-color 0.3s ease';
+    body.style.transition = 'color 0.3s ease, background-color 0.3s ease';
 
     root.classList.remove('light', 'dark');
     root.classList.add(theme === 'dark' ? 'dark' : 'light');
-  }, [theme]);
+
+    // Apply theme attribute for additional styling hooks
+    root.setAttribute('data-theme', theme);
+    
+    // Store theme preference
+    localStorage.setItem(storageKey, theme);
+  }, [theme, storageKey]);
 
   const value = {
     theme,

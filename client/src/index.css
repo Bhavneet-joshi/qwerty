@@ -71,6 +71,71 @@
 @layer base {
   * {
     @apply border-border;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  /* Smooth transitions for theme changes */
+  html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Enhance specific elements with smooth transitions */
+  body, div, section, header, footer, nav, main, aside, article {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  /* Button and interactive elements */
+  button, a, input, textarea, select {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  /* Card and container transitions */
+  .card, [data-theme-element] {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  /* Enhanced theme transition animations */
+  .theme-transition {
+    transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+  
+  /* Special glow effect for golden elements during theme change */
+  .golden-glow {
+    transition: box-shadow 0.3s ease, color 0.3s ease;
+  }
+  
+  .golden-glow:hover {
+    box-shadow: 0 0 20px rgba(218, 165, 32, 0.3);
+  }
+  
+  /* Dark mode specific transitions */
+  .dark .golden-glow:hover {
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+  }
+  
+  /* Page fade transition during theme change */
+  @keyframes theme-fade {
+    0% { opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 1; }
+  }
+  
+  .theme-changing {
+    animation: theme-fade 0.3s ease-in-out;
+  }
+  
+  /* Enhanced button transitions */
+  .theme-button {
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    transform-origin: center;
+  }
+  
+  .theme-button:hover {
+    transform: scale(1.05);
+  }
+  
+  .theme-button:active {
+    transform: scale(0.95);
   }
 
   body {

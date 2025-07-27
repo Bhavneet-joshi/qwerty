@@ -163,12 +163,24 @@ export const insertContractCommentSchema = createInsertSchema(contractComments);
 export const insertEmployeePermissionSchema = createInsertSchema(employeePermissions);
 
 // Extended schemas for forms
-export const registerUserSchema = insertUserSchema.extend({
-  confirmPassword: z.string().min(8),
-  panNumber: z.string().length(10),
-  aadhaarNumber: z.string().length(12),
-  contactNumber: z.string().min(10),
-  address: z.string().min(10),
+export const registerUserSchema = z.object({
+  id: z.string().default(""),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+  contactNumber: z.string().min(10, "Contact number must be at least 10 digits"),
+  address: z.string().min(10, "Address must be at least 10 characters"),
+  captcha: z.string().min(1, "Please complete the CAPTCHA"),
+  otp: z.string().length(6, "OTP must be 6 digits"),
+  password: z.string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"),
+  confirmPassword: z.string().min(8, "Password must be at least 8 characters"),
+  role: z.enum(["client", "employee", "admin"]).default("client"),
+  isActive: z.boolean().default(true),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
 });
 
 export const contractFormSchema = insertContractSchema.extend({

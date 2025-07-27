@@ -165,6 +165,98 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
       {/* Footer */}
       <footer className="bg-gray-900 dark:bg-gray-950 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            {/* Our Office - Map Section (Left Side) */}
+            <div className="lg:col-span-1">
+              <h3 className="text-lg font-semibold text-golden mb-4">OUR OFFICE</h3>
+              <div className="bg-gray-800 dark:bg-gray-900 rounded-lg overflow-hidden shadow-xl">
+                <div className="relative h-48 bg-gradient-to-br from-blue-900 to-green-900">
+                  {/* Simplified Map Interface */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-12 h-12 bg-golden rounded-full flex items-center justify-center">
+                      <svg className="w-6 h-6 text-navyblue" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                      </svg>
+                    </div>
+                  </div>
+                  
+                  {/* Map Grid Overlay */}
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="grid grid-cols-6 grid-rows-3 h-full">
+                      {Array.from({ length: 18 }).map((_, i) => (
+                        <div key={i} className="border border-gray-400"></div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Animated Location Marker */}
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <div className="relative">
+                      <div className="animate-ping absolute h-3 w-3 rounded-full bg-golden opacity-75"></div>
+                      <div className="relative h-3 w-3 rounded-full bg-golden border-2 border-white shadow-lg"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-4 space-y-2 text-sm text-gray-300">
+                <p className="font-medium">📞 +91 120 456 7890</p>
+                <p>123 Business Park, Sector 62, Noida</p>
+              </div>
+            </div>
+
+            {/* Say Hello Section (Middle) */}
+            <div className="lg:col-span-1">
+              <h3 className="text-lg font-semibold text-golden mb-4">SAY HELLO</h3>
+              <div className="space-y-4">
+                <p className="text-gray-300 text-sm">
+                  If you are interested in working with us or just want to say hello simply drop us a line!
+                </p>
+                <p className="text-golden font-semibold">contact@hlsgindustries.com</p>
+              </div>
+            </div>
+
+            {/* Subscribe Us Section (Right) */}
+            <div className="lg:col-span-1">
+              <h3 className="text-lg font-semibold text-golden mb-4">SUBSCRIBE US</h3>
+              <div className="space-y-4">
+                {/* Social Media Icons */}
+                <div className="flex space-x-3">
+                  <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center hover:bg-golden hover:text-navyblue transition-colors cursor-pointer">
+                    <span className="text-xs font-bold">f</span>
+                  </div>
+                  <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center hover:bg-golden hover:text-navyblue transition-colors cursor-pointer">
+                    <span className="text-xs font-bold">t</span>
+                  </div>
+                  <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center hover:bg-golden hover:text-navyblue transition-colors cursor-pointer">
+                    <span className="text-xs font-bold">in</span>
+                  </div>
+                  <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center hover:bg-golden hover:text-navyblue transition-colors cursor-pointer">
+                    <span className="text-xs font-bold">g+</span>
+                  </div>
+                  <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center hover:bg-golden hover:text-navyblue transition-colors cursor-pointer">
+                    <span className="text-xs font-bold">fl</span>
+                  </div>
+                  <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center hover:bg-golden hover:text-navyblue transition-colors cursor-pointer">
+                    <span className="text-xs font-bold">pi</span>
+                  </div>
+                </div>
+                
+                {/* Email Subscription */}
+                <div className="space-y-3">
+                  <input
+                    type="email"
+                    placeholder="YOUR EMAIL"
+                    className="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-full text-white placeholder-gray-400 focus:border-golden focus:outline-none"
+                  />
+                  <button className="w-full bg-gray-600 hover:bg-golden hover:text-navyblue text-white py-3 rounded-full font-semibold transition-colors duration-200">
+                    SUBMIT
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Company Info */}
             <div>
@@ -221,8 +313,8 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
             <div>
               <h3 className="text-lg font-semibold mb-6">Legal</h3>
               <ul className="space-y-3">
-                <li><Link href="/policy"><a className="text-gray-300 hover:text-golden transition-colors duration-200">Privacy Policy</a></Link></li>
-                <li><Link href="/policy"><a className="text-gray-300 hover:text-golden transition-colors duration-200">Data Protection</a></Link></li>
+                <li><Link href="/policy"><span className="text-gray-300 hover:text-golden transition-colors duration-200 cursor-pointer">Privacy Policy</span></Link></li>
+                <li><Link href="/policy"><span className="text-gray-300 hover:text-golden transition-colors duration-200 cursor-pointer">Data Protection</span></Link></li>
                 <li><a href="#" className="text-gray-300 hover:text-golden transition-colors duration-200">Terms of Service</a></li>
                 <li><a href="#" className="text-gray-300 hover:text-golden transition-colors duration-200">Cookie Policy</a></li>
                 <li><a href="#" className="text-gray-300 hover:text-golden transition-colors duration-200">Compliance</a></li>

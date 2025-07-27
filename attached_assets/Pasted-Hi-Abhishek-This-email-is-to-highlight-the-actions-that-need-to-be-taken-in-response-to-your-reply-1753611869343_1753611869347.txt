@@ -1,0 +1,108 @@
+Hi Abhishek,
+
+This email is to highlight the actions that need to be taken in response to your reply to the non-compliance notice, as well as to provide initial feedback on a few of the designs shared.
+
+Actions Required on Non-Compliance
+
+1. Restoration of Old Designs:
+The previously uploaded designs can be easily restored using GitHub version history. You are required to recover and re-upload them within 24 hours, i.e., by 10:00 PM IST, 16th July 2025.
+
+2. Final Warning on Further Breach:
+Please note that any further non-compliance will result in termination of the agreement under Clause 9.3 of the Master Service Agreement (MSA). Kindly treat this as a final notice.
+
+3. Clarification on Agreement Review:
+In your previous email, you confirmed that you have reviewed the entire agreement. However, the registration process in your designs does not align with the requirements defined in the SOW – Backend. Please provide an explanation for this inconsistency.
+
+
+Feedback – Register Pages and Flow
+
+As per Clause 3.3, Point 1 of the SOW – Backend (Authentication and Authorization – Client), the registration process must consist of four distinct steps. Your current design partially aligns with this but requires corrections as follows:
+
+Step 1:
+
+Should include Mobile Number, Email, and CAPTCHA (as per the clause).
+
+Your design incorrectly includes First Name and Last Name, which are not required at this stage.
+
+CAPTCHA is currently missing.
+
+>>> Action: Add CAPTCHA to Step 1 and move Name fields to Step 2.
+
+
+Step 2:
+
+Should involve OTP submission, which is completely missing in your design.
+
+
+>>> Action: Add OTP entry as a separate second step.
+
+Step 3:
+
+Should include basic details, such as:
+
+Name
+Contact information (Mobile and Email – should be prefilled)
+Address (to be filled by the user)
+
+Your current design partially includes this information, but also asks for Aadhaar and PAN, which are not required at registration.
+
+>>> Action: Remove Aadhaar and PAN fields; ensure all other fields align.
+
+
+Step 4:
+
+Should include Password creation, with validation rules for password strength.
+
+Your design currently presents this in Screen 3.
+
+>>> Action: Move this to Step 4 and clearly include strength requirements.
+
+
+Step 5:
+
+Your Screen 4 confirms all entered details. This is a good addition.
+
+
+> Action: Retain this screen but remove PAN and add Address in the confirmation summary.
+
+
+General UI Remarks:
+
+The overall color scheme is good.
+Error messages and validations appear well-designed.
+
+>>> I will approve the registration flow once:
+
+The steps above are implemented properly,
+Tablet view designs are shared, and
+Dark mode versions are submitted.
+
+
+Feedback – Contact Us Page
+
+The overall layout is visually appropriate.
+
+However, the actual map view is missing.
+
+
+>>> Action: Add the map section to the design.
+
+
+Additionally, please clarify:
+
+Where is the message directed when a user clicks “Send Message” in the Send Us a Message section?
+
+>>> This page will be approved once the map is added, clarification is provided, and dark mode design is also shared.
+
+No Assumed Approval for Installment
+
+Please note that none of the above comments or suggestions shall be considered as design approval, whether partial or basic.
+Approval required for release of the 1st installment remains withheld until all conditions are fully satisfied.
+
+Design Consistency
+
+Please provide a brief explanation as to why the golden or goldenrod color palette (as per branding guidelines) was not used at all in your current design submissions.
+
+Remaining Feedback
+
+Feedback on the remaining pages will be shared shortly.
