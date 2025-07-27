@@ -250,6 +250,54 @@ export default function Login() {
                 </div>
               </div>
             </Form>
+
+            {/* Demo Account Buttons */}
+            <div className="space-y-4">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">Or try demo accounts</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => handleMockLogin('client')}
+                  className="text-xs px-2 py-1 h-8 border-green-200 text-green-700 hover:bg-green-50 dark:border-green-800 dark:text-green-400 dark:hover:bg-green-950"
+                >
+                  <User className="h-3 w-3 mr-1" />
+                  Client
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => handleMockLogin('employee')}
+                  className="text-xs px-2 py-1 h-8 border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950"
+                >
+                  <UserCheck className="h-3 w-3 mr-1" />
+                  Employee
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => handleMockLogin('admin')}
+                  className="text-xs px-2 py-1 h-8 border-red-200 text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-950"
+                >
+                  <Shield className="h-3 w-3 mr-1" />
+                  Admin
+                </Button>
+              </div>
+
+              <div className="text-center">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Demo accounts pre-fill login credentials. Password: <span className="font-mono">demo123</span>
+                </p>
+              </div>
+            </div>
           </div>
         );
 

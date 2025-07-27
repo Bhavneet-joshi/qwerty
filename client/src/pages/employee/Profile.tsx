@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -10,14 +10,29 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import ProtectedLayout from "@/components/ProtectedLayout";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
-import { isUnauthorizedError } from "@/lib/authUtils";
-import { User, Mail, Phone, MapPin, CreditCard, Key, Camera, AlertCircle } from "lucide-react";
+import { 
+  User, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  CreditCard, 
+  Key, 
+  Camera, 
+  AlertCircle,
+  Shield,
+  Building,
+  Calendar,
+  FileText,
+  Clock,
+  CheckCircle
+} from "lucide-react";
 
 const profileSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -36,13 +51,15 @@ export default function EmployeeProfile() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState("personal");
+  const [passwordChangeRequested, setPasswordChangeRequested] = useState(false);
 
-  // Redirect if not authenticated
+  // Redirect if not authenticated or not employee
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isLoading && (!isAuthenticated || (user as any)?.role !== "employee")) {
       toast({
         title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
+        description: "You don't have employee access.",
         variant: "destructive",
       });
       setTimeout(() => {
@@ -50,26 +67,26 @@ export default function EmployeeProfile() {
       }, 500);
       return;
     }
-  }, [isAuthenticated, isLoading, toast]);
+  }, [isAuthenticated, isLoading, user, toast]);
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      firstName: user?.firstName || "",
-      lastName: user?.lastName || "",
-      email: user?.email || "",
-      contactNumber: user?.contactNumber || "",
-      address: user?.address || "",
-      panNumber: user?.panNumber || "",
-      aadhaarNumber: user?.aadhaarNumber || "",
-      employeeId: user?.employeeId || "",
+      firstName: (user as any)?.firstName || "",
+      lastName: (user as any)?.lastName || "",
+      email: (user as any)?.email || "",
+      contactNumber: (user as any)?.contactNumber || "",
+      address: (user as any)?.address || "",
+      panNumber: (user as any)?.panNumber || "",
+      aadhaarNumber: (user as any)?.aadhaarNumber || "",
+      employeeId: (user as any)?.employeeId || "",
     }
   });
 
   // Update profile mutation
   const updateProfileMutation = useMutation({
     mutationFn: async (data: ProfileFormData) => {
-      await apiRequest("PUT", `/api/users/${user?.id}/profile`, data);
+      await apiRequest("PUT", `/api/users/${(user as any)?.id}/profile`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
@@ -78,18 +95,7 @@ export default function EmployeeProfile() {
         description: "Your profile has been successfully updated.",
       });
     },
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
+    onError: () => {
       toast({
         title: "Update Failed",
         description: "Failed to update profile. Please try again.",
@@ -102,35 +108,29 @@ export default function EmployeeProfile() {
   const requestPasswordChangeMutation = useMutation({
     mutationFn: async () => {
       await apiRequest("POST", "/api/users/request-password-change", {
-        userId: user?.id,
-        reason: "Employee password change request"
+        userId: (user as any)?.id,
+        reason: "Employee password change request from profile page"
       });
     },
     onSuccess: () => {
+      setPasswordChangeRequested(true);
       toast({
         title: "Request Submitted",
-        description: "Your password change request has been sent to the admin.",
+        description: "Your password change request has been sent to the admin for approval.",
       });
     },
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
+    onError: () => {
       toast({
         title: "Request Failed",
-        description: "Failed to submit password change request.",
+        description: "Failed to submit password change request. Please try again.",
         variant: "destructive",
       });
     },
   });
+
+  const onSubmit = (data: ProfileFormData) => {
+    updateProfileMutation.mutate(data);
+  };
 
   if (isLoading) {
     return (
@@ -142,13 +142,9 @@ export default function EmployeeProfile() {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || (user as any)?.role !== "employee") {
     return null;
   }
-
-  const onSubmit = (data: ProfileFormData) => {
-    updateProfileMutation.mutate(data);
-  };
 
   return (
     <ProtectedLayout>
@@ -158,75 +154,68 @@ export default function EmployeeProfile() {
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-navyblue mb-2">Employee Profile</h1>
             <p className="text-gray-600">
-              Manage your employee information and account settings.
+              Manage your employee details, documents, and security settings.
             </p>
           </div>
 
-          {/* Profile Overview */}
+          {/* Profile Overview Card */}
           <Card className="mb-8">
             <CardContent className="pt-6">
               <div className="flex items-center space-x-6">
                 <div className="relative">
                   <Avatar className="h-24 w-24">
-                    <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
-                    <AvatarFallback className="text-xl">
-                      {user?.firstName?.charAt(0) || "E"}
+                    <AvatarImage src={(user as any)?.profilePhoto} />
+                    <AvatarFallback className="bg-navyblue text-white text-2xl">
+                      {(user as any)?.firstName?.charAt(0) || "E"}
                     </AvatarFallback>
                   </Avatar>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0"
+                  <Button 
+                    size="sm" 
+                    className="absolute -bottom-2 -right-2 rounded-full h-8 w-8 p-0 bg-golden hover:bg-goldenrod1 text-navyblue"
                   >
                     <Camera className="h-4 w-4" />
                   </Button>
                 </div>
-                
                 <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <h2 className="text-2xl font-bold text-navyblue">
-                      {user?.firstName} {user?.lastName}
-                    </h2>
+                  <h2 className="text-2xl font-bold text-navyblue">
+                    {(user as any)?.firstName} {(user as any)?.lastName}
+                  </h2>
+                  <p className="text-gray-600 mb-2">{(user as any)?.email}</p>
+                  <div className="flex items-center space-x-4">
                     <Badge className="bg-blue-100 text-blue-800">
+                      <User className="h-3 w-3 mr-1" />
                       Employee
                     </Badge>
+                    <Badge variant="outline">
+                      <Building className="h-3 w-3 mr-1" />
+                      ID: {(user as any)?.employeeId || "Not Assigned"}
+                    </Badge>
                   </div>
-                  <div className="flex items-center space-x-4 text-gray-600">
-                    <div className="flex items-center space-x-1">
-                      <Mail className="h-4 w-4" />
-                      <span>{user?.email}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Phone className="h-4 w-4" />
-                      <span>{user?.contactNumber || "Not provided"}</span>
-                    </div>
-                    {user?.employeeId && (
-                      <div className="flex items-center space-x-1">
-                        <User className="h-4 w-4" />
-                        <span>ID: {user.employeeId}</span>
-                      </div>
-                    )}
-                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-gray-500">Member since</p>
+                  <p className="font-medium">
+                    {new Date((user as any)?.createdAt || Date.now()).toLocaleDateString()}
+                  </p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Profile Form */}
-          <Tabs defaultValue="personal" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="personal">Personal Information</TabsTrigger>
+          {/* Tabbed Interface */}
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="personal">Personal Info</TabsTrigger>
               <TabsTrigger value="documents">Documents</TabsTrigger>
               <TabsTrigger value="security">Security</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
-            
-            <TabsContent value="personal" className="space-y-6">
+
+            {/* Personal Information Tab */}
+            <TabsContent value="personal">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center text-navyblue">
-                    <User className="mr-2 h-5 w-5" />
-                    Personal Information
-                  </CardTitle>
+                  <CardTitle className="text-xl text-navyblue">Personal Information</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Form {...form}>
@@ -245,6 +234,7 @@ export default function EmployeeProfile() {
                             </FormItem>
                           )}
                         />
+
                         <FormField
                           control={form.control}
                           name="lastName"
@@ -258,50 +248,50 @@ export default function EmployeeProfile() {
                             </FormItem>
                           )}
                         />
-                      </div>
-                      
-                      <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email Address</FormLabel>
-                            <FormControl>
-                              <Input type="email" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={form.control}
-                        name="contactNumber"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Contact Number</FormLabel>
-                            <FormControl>
-                              <Input {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
 
-                      <FormField
-                        control={form.control}
-                        name="employeeId"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Employee ID</FormLabel>
-                            <FormControl>
-                              <Input {...field} disabled />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email Address</FormLabel>
+                              <FormControl>
+                                <Input {...field} type="email" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="contactNumber"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Contact Number</FormLabel>
+                              <FormControl>
+                                <Input {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="employeeId"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Employee ID</FormLabel>
+                              <FormControl>
+                                <Input {...field} readOnly className="bg-gray-50" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
                       <FormField
                         control={form.control}
                         name="address"
@@ -309,16 +299,16 @@ export default function EmployeeProfile() {
                           <FormItem>
                             <FormLabel>Address</FormLabel>
                             <FormControl>
-                              <Textarea rows={4} {...field} />
+                              <Textarea {...field} rows={3} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                      
-                      <Button
-                        type="submit"
-                        className="btn-primary text-white"
+
+                      <Button 
+                        type="submit" 
+                        className="bg-navyblue hover:bg-darkblue text-white"
                         disabled={updateProfileMutation.isPending}
                       >
                         {updateProfileMutation.isPending ? "Updating..." : "Update Profile"}
@@ -328,104 +318,203 @@ export default function EmployeeProfile() {
                 </CardContent>
               </Card>
             </TabsContent>
-            
-            <TabsContent value="documents" className="space-y-6">
+
+            {/* Documents Tab */}
+            <TabsContent value="documents">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center text-navyblue">
-                    <CreditCard className="mr-2 h-5 w-5" />
-                    Identity Documents
-                  </CardTitle>
+                  <CardTitle className="text-xl text-navyblue">Identity Documents</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
                       name="panNumber"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>PAN Number</FormLabel>
+                          <FormLabel className="flex items-center">
+                            <CreditCard className="h-4 w-4 mr-2" />
+                            PAN Number
+                          </FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="ABCDE1234F" />
+                            <Input 
+                              {...field} 
+                              placeholder="ABCDE1234F"
+                              className="uppercase"
+                              maxLength={10}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={form.control}
                       name="aadhaarNumber"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Aadhaar Number</FormLabel>
+                          <FormLabel className="flex items-center">
+                            <Shield className="h-4 w-4 mr-2" />
+                            Aadhaar Number
+                          </FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="1234 5678 9012" />
+                            <Input 
+                              {...field} 
+                              placeholder="1234 5678 9012"
+                              maxLength={12}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    
-                    <Button
-                      type="button"
+                  </div>
+
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      Your identity documents are encrypted and stored securely. They are only visible to authorized personnel.
+                    </AlertDescription>
+                  </Alert>
+
+                  <div className="pt-4">
+                    <Button 
                       onClick={() => form.handleSubmit(onSubmit)()}
-                      className="btn-primary text-white"
+                      className="bg-golden hover:bg-goldenrod1 text-navyblue"
                       disabled={updateProfileMutation.isPending}
                     >
-                      {updateProfileMutation.isPending ? "Updating..." : "Update Documents"}
+                      {updateProfileMutation.isPending ? "Updating..." : "Save Documents"}
                     </Button>
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
-            
-            <TabsContent value="security" className="space-y-6">
+
+            {/* Security Tab */}
+            <TabsContent value="security">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center text-navyblue">
-                    <Key className="mr-2 h-5 w-5" />
-                    Security Settings
-                  </CardTitle>
+                  <CardTitle className="text-xl text-navyblue">Security Settings</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                      <div className="flex items-start space-x-3">
-                        <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <h3 className="text-sm font-medium text-yellow-800">Password Change Policy</h3>
-                          <p className="text-sm text-yellow-700 mt-1">
-                            As an employee, password changes must be requested through the admin. 
-                            Your request will be reviewed and processed by the system administrator.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-4">
+                <CardContent className="space-y-6">
+                  <div className="p-4 border rounded-lg">
+                    <div className="flex items-center justify-between">
                       <div>
-                        <Label>Current Password Status</Label>
-                        <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-                          <p className="text-sm text-green-800">Password is active and secure</p>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <Label>Request Password Change</Label>
-                        <p className="text-sm text-gray-600 mt-1 mb-3">
-                          Submit a request to change your password. The admin will review and approve your request.
+                        <h3 className="font-medium text-navyblue">Password Change Request</h3>
+                        <p className="text-sm text-gray-600">
+                          Request admin to change your password for security reasons
                         </p>
-                        <Button 
-                          className="btn-golden text-white"
-                          onClick={() => requestPasswordChangeMutation.mutate()}
-                          disabled={requestPasswordChangeMutation.isPending}
-                        >
-                          {requestPasswordChangeMutation.isPending ? "Submitting..." : "Request Password Change"}
-                        </Button>
                       </div>
+                      <Button
+                        onClick={() => requestPasswordChangeMutation.mutate()}
+                        disabled={requestPasswordChangeMutation.isPending || passwordChangeRequested}
+                        variant={passwordChangeRequested ? "outline" : "default"}
+                        className={passwordChangeRequested ? "" : "bg-navyblue hover:bg-darkblue text-white"}
+                      >
+                        <Key className="h-4 w-4 mr-2" />
+                        {passwordChangeRequested ? "Request Sent" : "Request Password Change"}
+                      </Button>
                     </div>
                   </div>
+
+                  {passwordChangeRequested && (
+                    <Alert>
+                      <CheckCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        Your password change request has been submitted to the admin. You will be notified once it's processed.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  <div className="p-4 border rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium text-navyblue">Last Login</h3>
+                        <p className="text-sm text-gray-600">
+                          Track your recent login activity
+                        </p>
+                      </div>
+                      <Badge variant="outline">
+                        <Clock className="h-3 w-3 mr-1" />
+                        Today, 2:30 PM
+                      </Badge>
+                    </div>
+                  </div>
+
+                  <div className="p-4 border rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium text-navyblue">Account Status</h3>
+                        <p className="text-sm text-gray-600">
+                          Your employee account is active and verified
+                        </p>
+                      </div>
+                      <Badge className="bg-green-100 text-green-800">
+                        <CheckCircle className="h-3 w-3 mr-1" />
+                        Active
+                      </Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Settings Tab */}
+            <TabsContent value="settings">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl text-navyblue">Account Settings</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="p-4 border rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium text-navyblue">Email Notifications</h3>
+                        <p className="text-sm text-gray-600">
+                          Receive notifications about contract assignments and updates
+                        </p>
+                      </div>
+                      <Button variant="outline">
+                        Configure
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="p-4 border rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium text-navyblue">Contract Preferences</h3>
+                        <p className="text-sm text-gray-600">
+                          Set your working preferences and availability
+                        </p>
+                      </div>
+                      <Button variant="outline">
+                        Update
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="p-4 border rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium text-navyblue">Privacy Settings</h3>
+                        <p className="text-sm text-gray-600">
+                          Control who can see your profile information
+                        </p>
+                      </div>
+                      <Button variant="outline">
+                        Manage
+                      </Button>
+                    </div>
+                  </div>
+
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      Any changes to critical settings may require admin approval before they take effect.
+                    </AlertDescription>
+                  </Alert>
                 </CardContent>
               </Card>
             </TabsContent>

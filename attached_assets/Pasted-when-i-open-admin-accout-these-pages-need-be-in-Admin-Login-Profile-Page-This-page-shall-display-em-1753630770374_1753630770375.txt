@@ -1,0 +1,51 @@
+when i open admin accout these pages need be in Admin Login:
+Profile Page This page shall display employee details such as name, PAN,
+Aadhaar number, contact information, address, profile photo,
+change password option.
+Dashboard This page shall display a counter showing the total number of
+contracts the company has. It will also feature multiple counters
+indicating the number of contracts categorized by client, by
+employee, by status (open/in progress), and by status (closed—
+either delivered or cancelled). Additionally, it shall include lists of
+the five most recent contracts sorted by date, contract value, and
+contract duration.
+List of
+Contracts Page
+This page shall display a list of all company contracts, including
+details such as the contract name, description, date, and duration.
+Each entry shall include a button to view the full contract details.
+The page shall also allow users filtering of contracts by client
+name, date, or contract duration. This page shall also include a
+button to the “New Contract Page”.Contract
+specific page
+This page is unique to each contract and contains all relevant
+contract details, such as the name, description, date, and
+duration. It also includes various action buttons, such as:
+• Edit contract.
+• Reply to client comments.
+• Add new comments to any line.
+• Open online.
+• Open on desktop.
+• Delete contract.
+• Add new lines to the contract document.
+New Contract
+page
+This page allows admin to add new contracts by adding various
+details and linking word/excel files from SharePoint (via M365
+integration) and provide access to various employees and clients.
+User
+Management
+Page
+This page allows the admin to manage passwords, employee
+details, and client information. The admin can change employee
+passwords and update employee details as needed.
+Additionally, the page shall include a table for the admin to
+manage access permissions for various employees. This table will
+feature:
+• A dropdown in the first column to select one or more
+employees as Preparers.
+• A second column to assign one or more employees
+as Reviewers.
+• Support for multi-level review functionality.
+Controls to manage read, write, edit, and delete access for each of
+the above functions on a per-user basis

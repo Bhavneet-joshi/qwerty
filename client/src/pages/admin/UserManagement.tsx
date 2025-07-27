@@ -10,44 +10,37 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import ProtectedLayout from "@/components/ProtectedLayout";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
 import { 
   Users, 
-  UserPlus,
+  UserPlus, 
   Search, 
   Filter, 
-  RefreshCw,
-  MoreHorizontal,
   Edit,
   Trash2,
   Key,
   Shield,
-  Mail,
-  Phone,
-  Calendar,
+  User,
   Building,
   Settings,
-  UserCheck,
-  UserX
+  Eye,
+  EyeOff
 } from "lucide-react";
 
-export default function AdminUserManagement() {
+export default function UserManagement() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState<any>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [showPermissions, setShowPermissions] = useState(false);
 
   // Redirect if not authenticated or not admin
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || user?.role !== "admin")) {
+    if (!isLoading && (!isAuthenticated || (user as any)?.role !== "admin")) {
       toast({
         title: "Unauthorized",
         description: "You don't have admin access.",
@@ -58,29 +51,36 @@ export default function AdminUserManagement() {
       }, 500);
       return;
     }
-  }, [isAuthenticated, isLoading, user?.role, toast]);
+  }, [isAuthenticated, isLoading, user, toast]);
 
   // Fetch all users
-  const { data: users, isLoading: usersLoading, refetch } = useQuery({
+  const { data: users, isLoading: usersLoading } = useQuery({
     queryKey: ["/api/users"],
     retry: false,
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
+  });
+
+  // Reset password mutation
+  const resetPasswordMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      await apiRequest("POST", `/api/users/${userId}/reset-password`);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Password Reset",
+        description: "Password has been reset successfully.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Reset Failed",
+        description: "Failed to reset password.",
+        variant: "destructive",
+      });
     },
   });
 
   // Update user role mutation
-  const updateUserRoleMutation = useMutation({
+  const updateRoleMutation = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
       await apiRequest("PUT", `/api/users/${userId}/role`, { role });
     },
@@ -88,63 +88,40 @@ export default function AdminUserManagement() {
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
       toast({
         title: "Role Updated",
-        description: "User role has been successfully updated.",
+        description: "User role has been updated successfully.",
       });
     },
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
+    onError: () => {
       toast({
         title: "Update Failed",
-        description: "Failed to update user role. Please try again.",
+        description: "Failed to update user role.",
         variant: "destructive",
       });
     },
   });
 
-  // Update user profile mutation
-  const updateUserMutation = useMutation({
-    mutationFn: async ({ userId, data }: { userId: string; data: any }) => {
-      await apiRequest("PUT", `/api/users/${userId}/profile`, data);
+  // Delete user mutation
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      await apiRequest("DELETE", `/api/users/${userId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/users"] });
-      setIsEditDialogOpen(false);
       toast({
-        title: "User Updated",
-        description: "User information has been successfully updated.",
+        title: "User Deleted",
+        description: "User has been deleted successfully.",
       });
     },
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
+    onError: () => {
       toast({
-        title: "Update Failed",
-        description: "Failed to update user. Please try again.",
+        title: "Delete Failed",
+        description: "Failed to delete user.",
         variant: "destructive",
       });
     },
   });
 
-  if (isLoading || usersLoading) {
+  if (isLoading) {
     return (
       <ProtectedLayout>
         <div className="min-h-screen flex items-center justify-center">
@@ -154,21 +131,19 @@ export default function AdminUserManagement() {
     );
   }
 
-  if (!isAuthenticated || user?.role !== "admin") {
+  if (!isAuthenticated || (user as any)?.role !== "admin") {
     return null;
   }
 
   // Filter users
-  const filteredUsers = (users || [])
-    .filter(u => {
-      const matchesSearch = u.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           u.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           u.email?.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredUsers = ((users as any[]) || [])
+    .filter((u: any) => {
+      const matchesSearch = 
+        u.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.email?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesRole = roleFilter === "all" || u.role === roleFilter;
-      const matchesStatus = statusFilter === "all" || 
-                           (statusFilter === "active" && u.isActive) ||
-                           (statusFilter === "inactive" && !u.isActive);
-      return matchesSearch && matchesRole && matchesStatus;
+      return matchesSearch && matchesRole;
     });
 
   const getRoleColor = (role: string) => {
@@ -184,20 +159,29 @@ export default function AdminUserManagement() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric"
-    });
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case "admin":
+        return <Shield className="h-4 w-4" />;
+      case "employee":
+        return <User className="h-4 w-4" />;
+      case "client":
+        return <Building className="h-4 w-4" />;
+      default:
+        return <User className="h-4 w-4" />;
+    }
   };
 
-  const userStats = {
-    total: users?.length || 0,
-    clients: users?.filter(u => u.role === "client").length || 0,
-    employees: users?.filter(u => u.role === "employee").length || 0,
-    admins: users?.filter(u => u.role === "admin").length || 0,
-    active: users?.filter(u => u.isActive).length || 0,
+  const handleResetPassword = (userId: string) => {
+    if (confirm("Are you sure you want to reset this user's password?")) {
+      resetPasswordMutation.mutate(userId);
+    }
+  };
+
+  const handleDeleteUser = (userId: string) => {
+    if (confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+      deleteUserMutation.mutate(userId);
+    }
   };
 
   return (
@@ -210,55 +194,25 @@ export default function AdminUserManagement() {
               <div>
                 <h1 className="text-3xl font-bold text-navyblue mb-2">User Management</h1>
                 <p className="text-gray-600">
-                  Manage user accounts, roles, and permissions across the system.
+                  Manage users, roles, passwords, and access permissions.
                 </p>
               </div>
-              <div className="flex items-center space-x-4">
-                <Button
-                  variant="outline"
-                  onClick={() => refetch()}
-                  disabled={usersLoading}
-                >
-                  <RefreshCw className={`h-4 w-4 mr-2 ${usersLoading ? 'animate-spin' : ''}`} />
-                  Refresh
-                </Button>
-                <Button className="btn-primary text-white">
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Add New User
-                </Button>
-              </div>
+              <Button className="bg-navyblue hover:bg-darkblue text-white">
+                <UserPlus className="h-4 w-4 mr-2" />
+                Add New User
+              </Button>
             </div>
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+          {/* User Statistics */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Users</CardTitle>
                 <Users className="h-4 w-4 text-navyblue" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-navyblue">{userStats.total}</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Clients</CardTitle>
-                <Building className="h-4 w-4 text-green-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-600">{userStats.clients}</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Employees</CardTitle>
-                <Users className="h-4 w-4 text-blue-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-blue-600">{userStats.employees}</div>
+                <div className="text-2xl font-bold text-navyblue">{filteredUsers.length}</div>
               </CardContent>
             </Card>
 
@@ -268,398 +222,254 @@ export default function AdminUserManagement() {
                 <Shield className="h-4 w-4 text-red-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-red-600">{userStats.admins}</div>
+                <div className="text-2xl font-bold text-red-600">
+                  {filteredUsers.filter((u: any) => u.role === "admin").length}
+                </div>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active</CardTitle>
-                <UserCheck className="h-4 w-4 text-green-600" />
+                <CardTitle className="text-sm font-medium">Employees</CardTitle>
+                <User className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-600">{userStats.active}</div>
+                <div className="text-2xl font-bold text-blue-600">
+                  {filteredUsers.filter((u: any) => u.role === "employee").length}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Clients</CardTitle>
+                <Building className="h-4 w-4 text-green-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-green-600">
+                  {filteredUsers.filter((u: any) => u.role === "client").length}
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          <Tabs defaultValue="users" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="users">User Accounts</TabsTrigger>
-              <TabsTrigger value="permissions">Access Management</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="users" className="space-y-6">
-              {/* Filters */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-navyblue">
-                    <Filter className="mr-2 h-5 w-5" />
-                    Filters & Search
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                      <Input
-                        placeholder="Search users..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
-                      />
-                    </div>
-                    
-                    <Select value={roleFilter} onValueChange={setRoleFilter}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Filter by role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Roles</SelectItem>
-                        <SelectItem value="client">Clients</SelectItem>
-                        <SelectItem value="employee">Employees</SelectItem>
-                        <SelectItem value="admin">Admins</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Filter by status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Status</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Users Table */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-navyblue">
-                    <Users className="mr-2 h-5 w-5" />
-                    User Accounts ({filteredUsers.length})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {filteredUsers.length === 0 ? (
-                    <div className="text-center py-12">
-                      <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-500 text-lg">No users found</p>
-                      <p className="text-sm text-gray-400 mb-6">
-                        {searchTerm || roleFilter !== "all" || statusFilter !== "all"
-                          ? "Try adjusting your search or filter criteria"
-                          : "No users have been created yet"
-                        }
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>User</TableHead>
-                            <TableHead>Contact</TableHead>
-                            <TableHead>Role</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Joined</TableHead>
-                            <TableHead>Actions</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {filteredUsers.map((u) => (
-                            <TableRow key={u.id}>
-                              <TableCell>
-                                <div className="flex items-center space-x-3">
-                                  <Avatar className="h-10 w-10">
-                                    <AvatarImage src={u.profileImageUrl || ""} alt={u.firstName || ""} />
-                                    <AvatarFallback>
-                                      {(u.firstName?.charAt(0) || "") + (u.lastName?.charAt(0) || "")}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div>
-                                    <p className="font-medium">{u.firstName} {u.lastName}</p>
-                                    <p className="text-sm text-gray-500">{u.email}</p>
-                                  </div>
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <div className="space-y-1">
-                                  {u.contactNumber && (
-                                    <div className="flex items-center text-sm">
-                                      <Phone className="h-3 w-3 mr-1 text-gray-400" />
-                                      {u.contactNumber}
-                                    </div>
-                                  )}
-                                  {u.employeeId && (
-                                    <div className="flex items-center text-sm">
-                                      <Badge variant="outline" className="text-xs">
-                                        ID: {u.employeeId}
-                                      </Badge>
-                                    </div>
-                                  )}
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <Select
-                                  value={u.role}
-                                  onValueChange={(role) => 
-                                    updateUserRoleMutation.mutate({ userId: u.id, role })
-                                  }
-                                  disabled={updateUserRoleMutation.isPending}
-                                >
-                                  <SelectTrigger className="w-32">
-                                    <SelectValue>
-                                      <Badge className={getRoleColor(u.role)}>
-                                        {u.role}
-                                      </Badge>
-                                    </SelectValue>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="client">Client</SelectItem>
-                                    <SelectItem value="employee">Employee</SelectItem>
-                                    <SelectItem value="admin">Admin</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex items-center">
-                                  {u.isActive ? (
-                                    <UserCheck className="h-4 w-4 text-green-600 mr-2" />
-                                  ) : (
-                                    <UserX className="h-4 w-4 text-red-600 mr-2" />
-                                  )}
-                                  <span className={u.isActive ? "text-green-600" : "text-red-600"}>
-                                    {u.isActive ? "Active" : "Inactive"}
-                                  </span>
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex items-center">
-                                  <Calendar className="h-4 w-4 mr-2 text-gray-400" />
-                                  {u.createdAt ? formatDate(u.createdAt) : "Unknown"}
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button size="sm" variant="outline">
-                                      <MoreHorizontal className="h-4 w-4" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuItem onClick={() => {
-                                      setSelectedUser(u);
-                                      setIsEditDialogOpen(true);
-                                    }}>
-                                      <Edit className="h-4 w-4 mr-2" />
-                                      Edit User
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                      <Key className="h-4 w-4 mr-2" />
-                                      Reset Password
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem className="text-red-600">
-                                      <Trash2 className="h-4 w-4 mr-2" />
-                                      Deactivate User
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="permissions" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center text-navyblue">
-                    <Settings className="mr-2 h-5 w-5" />
-                    Access Control & Permissions
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div>
-                        <h3 className="text-lg font-semibold text-navyblue mb-4">Employee Access Management</h3>
-                        <p className="text-sm text-gray-600 mb-4">
-                          Configure access permissions for employees across different contracts and system areas.
-                        </p>
-                        
-                        <div className="space-y-4">
-                          <div className="border rounded-lg p-4">
-                            <h4 className="font-medium mb-2">Contract Access Levels</h4>
-                            <div className="space-y-2 text-sm">
-                              <div className="flex justify-between">
-                                <span>Read Only</span>
-                                <Badge variant="outline">Default</Badge>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Comment & Review</span>
-                                <Badge variant="outline">Standard</Badge>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Edit & Modify</span>
-                                <Badge variant="outline">Advanced</Badge>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Full Control</span>
-                                <Badge variant="outline">Admin</Badge>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="border rounded-lg p-4">
-                            <h4 className="font-medium mb-2">Review Workflow</h4>
-                            <div className="space-y-2 text-sm">
-                              <label className="flex items-center">
-                                <input type="checkbox" className="mr-2" defaultChecked />
-                                Multi-level review required
-                              </label>
-                              <label className="flex items-center">
-                                <input type="checkbox" className="mr-2" defaultChecked />
-                                Preparer/Reviewer separation
-                              </label>
-                              <label className="flex items-center">
-                                <input type="checkbox" className="mr-2" />
-                                Automatic assignment
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div>
-                        <h3 className="text-lg font-semibold text-navyblue mb-4">System Permissions</h3>
-                        <p className="text-sm text-gray-600 mb-4">
-                          Manage system-wide permissions and role-based access controls.
-                        </p>
-                        
-                        <div className="space-y-4">
-                          <div className="border rounded-lg p-4">
-                            <h4 className="font-medium mb-2">Administrative Functions</h4>
-                            <div className="space-y-2 text-sm">
-                              <div className="flex justify-between">
-                                <span>User Management</span>
-                                <Badge className="bg-red-100 text-red-800">Admin Only</Badge>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Contract Creation</span>
-                                <Badge className="bg-red-100 text-red-800">Admin Only</Badge>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>System Settings</span>
-                                <Badge className="bg-red-100 text-red-800">Admin Only</Badge>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>Audit Logs</span>
-                                <Badge className="bg-red-100 text-red-800">Admin Only</Badge>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="border rounded-lg p-4">
-                            <h4 className="font-medium mb-2">Data Access Controls</h4>
-                            <div className="space-y-2 text-sm">
-                              <label className="flex items-center">
-                                <input type="checkbox" className="mr-2" defaultChecked />
-                                Role-based data filtering
-                              </label>
-                              <label className="flex items-center">
-                                <input type="checkbox" className="mr-2" defaultChecked />
-                                Client data isolation
-                              </label>
-                              <label className="flex items-center">
-                                <input type="checkbox" className="mr-2" defaultChecked />
-                                Audit trail logging
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end space-x-4">
-                      <Button variant="outline">
-                        Export Permissions
-                      </Button>
-                      <Button className="btn-golden text-white">
-                        Save Changes
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
-
-          {/* Edit User Dialog */}
-          <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>Edit User: {selectedUser?.firstName} {selectedUser?.lastName}</DialogTitle>
-              </DialogHeader>
-              {selectedUser && (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="firstName">First Name</Label>
-                      <Input
-                        id="firstName"
-                        defaultValue={selectedUser.firstName}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="lastName">Last Name</Label>
-                      <Input
-                        id="lastName"
-                        defaultValue={selectedUser.lastName}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="email">Email</Label>
+          {/* User Management */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl text-navyblue">All Users</CardTitle>
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
-                      id="email"
-                      type="email"
-                      defaultValue={selectedUser.email}
+                      placeholder="Search users..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 max-w-xs"
                     />
                   </div>
-                  
-                  <div>
-                    <Label htmlFor="contactNumber">Contact Number</Label>
-                    <Input
-                      id="contactNumber"
-                      defaultValue={selectedUser.contactNumber}
-                    />
-                  </div>
-                  
-                  <div className="flex justify-end space-x-4">
-                    <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button 
-                      className="btn-primary text-white"
-                      disabled={updateUserMutation.isPending}
-                    >
-                      {updateUserMutation.isPending ? "Saving..." : "Save Changes"}
-                    </Button>
-                  </div>
+                  <Select value={roleFilter} onValueChange={setRoleFilter}>
+                    <SelectTrigger className="w-40">
+                      <Filter className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Filter by role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Roles</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="employee">Employee</SelectItem>
+                      <SelectItem value="client">Client</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowPermissions(!showPermissions)}
+                  >
+                    <Settings className="h-4 w-4 mr-2" />
+                    {showPermissions ? "Hide" : "Show"} Permissions
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {usersLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-navyblue mx-auto"></div>
+                  <p className="text-gray-500 mt-2">Loading users...</p>
+                </div>
+              ) : filteredUsers.length === 0 ? (
+                <div className="text-center py-8">
+                  <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500">No users found</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>User</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead>Contact</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredUsers.map((user: any) => (
+                        <TableRow key={user.id}>
+                          <TableCell>
+                            <div className="flex items-center space-x-3">
+                              <div className="flex-shrink-0">
+                                <div className="h-8 w-8 rounded-full bg-navyblue text-white flex items-center justify-center text-sm font-medium">
+                                  {user.firstName?.charAt(0) || "U"}
+                                </div>
+                              </div>
+                              <div>
+                                <div className="font-medium text-gray-900">
+                                  {user.firstName} {user.lastName}
+                                </div>
+                                <div className="text-sm text-gray-500">ID: {user.id}</div>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-900">{user.email}</TableCell>
+                          <TableCell>
+                            <Badge className={getRoleColor(user.role)}>
+                              {getRoleIcon(user.role)}
+                              <span className="ml-1 capitalize">{user.role}</span>
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-500">
+                            {user.contactNumber || "Not provided"}
+                          </TableCell>
+                          <TableCell>
+                            <Badge className="bg-green-100 text-green-800">Active</Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center space-x-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleResetPassword(user.id)}
+                                disabled={resetPasswordMutation.isPending}
+                              >
+                                <Key className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setSelectedUser(user)}
+                              >
+                                <Edit className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDeleteUser(user.id)}
+                                disabled={deleteUserMutation.isPending}
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
               )}
-            </DialogContent>
-          </Dialog>
+            </CardContent>
+          </Card>
+
+          {/* Access Permissions Table */}
+          {showPermissions && (
+            <Card className="mt-8">
+              <CardHeader>
+                <CardTitle className="text-xl text-navyblue">Employee Access Permissions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Contract/Project</TableHead>
+                        <TableHead>Preparers</TableHead>
+                        <TableHead>Reviewers</TableHead>
+                        <TableHead>Read Access</TableHead>
+                        <TableHead>Write Access</TableHead>
+                        <TableHead>Edit Access</TableHead>
+                        <TableHead>Delete Access</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell className="font-medium">Contract Template v1.0</TableCell>
+                        <TableCell>
+                          <Select>
+                            <SelectTrigger className="w-40">
+                              <SelectValue placeholder="Select preparers" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {filteredUsers
+                                .filter((u: any) => u.role === "employee")
+                                .map((employee: any) => (
+                                  <SelectItem key={employee.id} value={employee.id}>
+                                    {employee.firstName} {employee.lastName}
+                                  </SelectItem>
+                                ))}
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell>
+                          <Select>
+                            <SelectTrigger className="w-40">
+                              <SelectValue placeholder="Select reviewers" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {filteredUsers
+                                .filter((u: any) => u.role === "employee")
+                                .map((employee: any) => (
+                                  <SelectItem key={employee.id} value={employee.id}>
+                                    {employee.firstName} {employee.lastName}
+                                  </SelectItem>
+                                ))}
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell>
+                          <Button size="sm" variant="outline">
+                            <Eye className="h-3 w-3" />
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <Button size="sm" variant="outline">
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <Button size="sm" variant="outline">
+                            <Settings className="h-3 w-3" />
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <Button size="sm" variant="outline">
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <Button size="sm" className="bg-golden hover:bg-goldenrod1 text-navyblue">
+                            Save
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </ProtectedLayout>

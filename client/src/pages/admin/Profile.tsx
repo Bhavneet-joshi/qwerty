@@ -47,7 +47,7 @@ export default function AdminProfile() {
 
   // Redirect if not authenticated or not admin
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || user?.role !== "admin")) {
+    if (!isLoading && (!isAuthenticated || (user as any)?.role !== "admin")) {
       toast({
         title: "Unauthorized",
         description: "You don't have admin access.",
@@ -58,18 +58,18 @@ export default function AdminProfile() {
       }, 500);
       return;
     }
-  }, [isAuthenticated, isLoading, user?.role, toast]);
+  }, [isAuthenticated, isLoading, user, toast]);
 
   const profileForm = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      firstName: user?.firstName || "",
-      lastName: user?.lastName || "",
-      email: user?.email || "",
-      contactNumber: user?.contactNumber || "",
-      address: user?.address || "",
-      panNumber: user?.panNumber || "",
-      aadhaarNumber: user?.aadhaarNumber || "",
+      firstName: (user as any)?.firstName || "",
+      lastName: (user as any)?.lastName || "",
+      email: (user as any)?.email || "",
+      contactNumber: (user as any)?.contactNumber || "",
+      address: (user as any)?.address || "",
+      panNumber: (user as any)?.panNumber || "",
+      aadhaarNumber: (user as any)?.aadhaarNumber || "",
     }
   });
 
@@ -85,7 +85,7 @@ export default function AdminProfile() {
   // Update profile mutation
   const updateProfileMutation = useMutation({
     mutationFn: async (data: ProfileFormData) => {
-      await apiRequest("PUT", `/api/users/${user?.id}/profile`, data);
+      await apiRequest("PUT", `/api/users/${(user as any)?.id}/profile`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
@@ -159,7 +159,7 @@ export default function AdminProfile() {
     );
   }
 
-  if (!isAuthenticated || user?.role !== "admin") {
+  if (!isAuthenticated || (user as any)?.role !== "admin") {
     return null;
   }
 
@@ -189,9 +189,9 @@ export default function AdminProfile() {
               <div className="flex items-center space-x-6">
                 <div className="relative">
                   <Avatar className="h-24 w-24">
-                    <AvatarImage src={user?.profileImageUrl || ""} alt={user?.firstName || ""} />
+                    <AvatarImage src={(user as any)?.profileImageUrl || ""} alt={(user as any)?.firstName || ""} />
                     <AvatarFallback className="text-xl">
-                      {user?.firstName?.charAt(0) || "A"}
+                      {(user as any)?.firstName?.charAt(0) || "A"}
                     </AvatarFallback>
                   </Avatar>
                   <Button
@@ -206,7 +206,7 @@ export default function AdminProfile() {
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
                     <h2 className="text-2xl font-bold text-navyblue">
-                      {user?.firstName} {user?.lastName}
+                      {(user as any)?.firstName} {(user as any)?.lastName}
                     </h2>
                     <Badge className="bg-red-100 text-red-800">
                       <Shield className="h-3 w-3 mr-1" />
@@ -216,11 +216,11 @@ export default function AdminProfile() {
                   <div className="flex items-center space-x-4 text-gray-600">
                     <div className="flex items-center space-x-1">
                       <Mail className="h-4 w-4" />
-                      <span>{user?.email}</span>
+                      <span>{(user as any)?.email}</span>
                     </div>
                     <div className="flex items-center space-x-1">
                       <Phone className="h-4 w-4" />
-                      <span>{user?.contactNumber || "Not provided"}</span>
+                      <span>{(user as any)?.contactNumber || "Not provided"}</span>
                     </div>
                   </div>
                   <div className="mt-3 flex items-center space-x-4 text-sm text-gray-500">
@@ -272,6 +272,102 @@ export default function AdminProfile() {
                         <FormField
                           control={profileForm.control}
                           name="lastName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Last Name</FormLabel>
+                              <FormControl>
+                                <Input {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={profileForm.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email Address</FormLabel>
+                              <FormControl>
+                                <Input {...field} type="email" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={profileForm.control}
+                          name="contactNumber"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Contact Number</FormLabel>
+                              <FormControl>
+                                <Input {...field} type="tel" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <FormField
+                        control={profileForm.control}
+                        name="address"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Address</FormLabel>
+                            <FormControl>
+                              <Textarea {...field} rows={3} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <Button 
+                        type="submit" 
+                        className="bg-navyblue hover:bg-darkblue text-white"
+                        disabled={updateProfileMutation.isPending}
+                      >
+                        {updateProfileMutation.isPending ? "Updating..." : "Update Profile"}
+                      </Button>
+                    </form>
+                  </Form>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="documents" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center text-navyblue">
+                    <CreditCard className="mr-2 h-5 w-5" />
+                    Identity Documents
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Form {...profileForm}>
+                    <form onSubmit={profileForm.handleSubmit(onProfileSubmit)} className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={profileForm.control}
+                          name="panNumber"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>PAN Number</FormLabel>
+                              <FormControl>
+                                <Input {...field} placeholder="ABCDE1234F" maxLength={10} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={profileForm.control}
+                          name="aadhaarNumber"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Last Name</FormLabel>

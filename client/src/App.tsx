@@ -36,9 +36,9 @@ import EmployeeContractSpecific from "@/pages/employee/ContractSpecific";
 import AdminDashboard from "@/pages/admin/Dashboard";
 import AdminProfile from "@/pages/admin/Profile";
 import AdminContracts from "@/pages/admin/Contracts";
+import UserManagement from "@/pages/admin/UserManagement";
 import AdminContractSpecific from "@/pages/admin/ContractSpecific";
 import AdminNewContract from "@/pages/admin/NewContract";
-import AdminUserManagement from "@/pages/admin/UserManagement";
 
 function Router() {
   const { isAuthenticated, isLoading, user } = useAuth();
@@ -68,30 +68,32 @@ function Router() {
         </>
       ) : (
         <>
-          {/* Client routes */}
-          {(user as any)?.role === 'client' && (
-            <Layout>
-              <Route path="/" component={ClientDashboard} />
-              <Route path="/dashboard" component={ClientDashboard} />
-              <Route path="/profile" component={ClientProfile} />
-              <Route path="/contracts" component={ClientContracts} />
-              <Route path="/contracts/:id" component={ClientContractView} />
-            </Layout>
-          )}
-          
-          {/* Employee routes */}
-          {(user as any)?.role === 'employee' && (
-            <Layout>
-              <Route path="/" component={ClientDashboard} />
-              <Route path="/dashboard" component={ClientDashboard} />
-              <Route path="/profile" component={ClientProfile} />
-              <Route path="/contracts" component={ClientContracts} />
-              <Route path="/contracts/:id" component={ClientContractView} />
-            </Layout>
-          )}
-          
           {/* Admin routes */}
           {(user as any)?.role === 'admin' && (
+            <>
+              <Route path="/" component={AdminDashboard} />
+              <Route path="/dashboard" component={AdminDashboard} />
+              <Route path="/profile" component={AdminProfile} />
+              <Route path="/contracts" component={AdminContracts} />
+              <Route path="/users" component={UserManagement} />
+              <Route path="/contracts/new" component={AdminNewContract} />
+              <Route path="/contracts/:id" component={AdminContractSpecific} />
+            </>
+          )}
+
+          {/* Employee routes */}
+          {(user as any)?.role === 'employee' && (
+            <>
+              <Route path="/" component={EmployeeDashboard} />
+              <Route path="/dashboard" component={EmployeeDashboard} />
+              <Route path="/profile" component={EmployeeProfile} />
+              <Route path="/contracts" component={EmployeeContracts} />
+              <Route path="/contracts/:id" component={EmployeeContractSpecific} />
+            </>
+          )}
+
+          {/* Client routes */}
+          {(user as any)?.role === 'client' && (
             <Layout>
               <Route path="/" component={ClientDashboard} />
               <Route path="/dashboard" component={ClientDashboard} />

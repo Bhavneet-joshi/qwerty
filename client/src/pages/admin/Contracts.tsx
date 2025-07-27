@@ -37,7 +37,7 @@ export default function AdminContracts() {
 
   // Redirect if not authenticated or not admin
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || user?.role !== "admin")) {
+    if (!isLoading && (!isAuthenticated || (user as any)?.role !== "admin")) {
       toast({
         title: "Unauthorized",
         description: "You don't have admin access.",
@@ -48,25 +48,12 @@ export default function AdminContracts() {
       }, 500);
       return;
     }
-  }, [isAuthenticated, isLoading, user?.role, toast]);
+  }, [isAuthenticated, isLoading, user, toast]);
 
   // Fetch all contracts
   const { data: contracts, isLoading: contractsLoading, refetch } = useQuery({
     queryKey: ["/api/contracts"],
     retry: false,
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
-    },
   });
 
   // Fetch users for filters
@@ -85,21 +72,21 @@ export default function AdminContracts() {
     );
   }
 
-  if (!isAuthenticated || user?.role !== "admin") {
+  if (!isAuthenticated || (user as any)?.role !== "admin") {
     return null;
   }
 
   // Filter and sort contracts
-  const filteredContracts = (contracts || [])
-    .filter(contract => {
-      const matchesSearch = contract.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredContracts = ((contracts as any[]) || [])
+    .filter((contract: any) => {
+      const matchesSearch = contract.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            contract.description?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === "all" || contract.status === statusFilter;
       const matchesClient = clientFilter === "all" || contract.clientId === clientFilter;
       const matchesEmployee = employeeFilter === "all" || contract.assignedEmployeeId === employeeFilter;
       return matchesSearch && matchesStatus && matchesClient && matchesEmployee;
     })
-    .sort((a, b) => {
+    .sort((a: any, b: any) => {
       switch (sortBy) {
         case "date":
           return new Date(b.contractDate).getTime() - new Date(a.contractDate).getTime();
@@ -109,14 +96,16 @@ export default function AdminContracts() {
           return a.status.localeCompare(b.status);
         case "value":
           return (b.contractValue || 0) - (a.contractValue || 0);
+        case "duration":
+          return (b.duration || 0) - (a.duration || 0);
         default:
           return 0;
       }
     });
 
   // Get unique clients and employees for filters
-  const clients = users?.filter(u => u.role === "client") || [];
-  const employees = users?.filter(u => u.role === "employee") || [];
+  const clients = ((users as any[]) || []).filter((u: any) => u.role === "client");
+  const employees = ((users as any[]) || []).filter((u: any) => u.role === "employee");
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -150,7 +139,7 @@ export default function AdminContracts() {
   };
 
   const getUserName = (userId: string) => {
-    const foundUser = users?.find(u => u.id === userId);
+    const foundUser = ((users as any[]) || []).find((u: any) => u.id === userId);
     return foundUser ? `${foundUser.firstName} ${foundUser.lastName}` : userId;
   };
 
@@ -194,7 +183,7 @@ export default function AdminContracts() {
                 <FileText className="h-4 w-4 text-navyblue" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-navyblue">{contracts?.length || 0}</div>
+                <div className="text-2xl font-bold text-navyblue">{((contracts as any[]) || []).length}</div>
               </CardContent>
             </Card>
 
@@ -205,7 +194,7 @@ export default function AdminContracts() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-600">
-                  {contracts?.filter(c => c.status === "active").length || 0}
+                  {((contracts as any[]) || []).filter((c: any) => c.status === "active").length}
                 </div>
               </CardContent>
             </Card>
@@ -217,7 +206,7 @@ export default function AdminContracts() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-blue-600">
-                  {contracts?.filter(c => c.status === "in_progress").length || 0}
+                  {((contracts as any[]) || []).filter((c: any) => c.status === "in_progress").length}
                 </div>
               </CardContent>
             </Card>
@@ -229,7 +218,7 @@ export default function AdminContracts() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-golden">
-                  {formatCurrency(contracts?.reduce((sum, c) => sum + (c.contractValue || 0), 0) || 0)}
+                  {formatCurrency(((contracts as any[]) || []).reduce((sum: number, c: any) => sum + (c.contractValue || 0), 0))}
                 </div>
               </CardContent>
             </Card>
