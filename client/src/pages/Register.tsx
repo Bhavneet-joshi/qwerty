@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,10 +12,120 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { registerUserSchema } from "@shared/schema";
 import { z } from "zod";
-import { ChevronLeft, ChevronRight, Smartphone, Shield, User, Key, Check, RefreshCw } from "lucide-react";
+import { ChevronLeft, ChevronRight, Smartphone, Shield, User, Key, Check, RefreshCw, Mail, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 type RegisterFormData = z.infer<typeof registerUserSchema>;
+
+// Mobile OTP Input Component
+const MobileOTPInput = ({ value, onChange, disabled }: { value: string; onChange: (value: string) => void; disabled: boolean }) => {
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  
+  useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
+
+  const handleChange = (index: number, val: string) => {
+    if (!/^\d*$/.test(val)) return;
+    
+    const newValue = value.split('');
+    newValue[index] = val;
+    const newOTP = newValue.join('');
+    onChange(newOTP);
+    
+    if (val && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !value[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="text-center">
+        <div className="flex items-center justify-center mb-2">
+          <Phone className="w-5 h-5 text-green-600 mr-2" />
+          <span className="text-sm font-medium text-green-600">Mobile OTP</span>
+        </div>
+        <p className="text-xs text-muted-foreground">Enter the 6-digit code sent to your mobile</p>
+      </div>
+      <div className="flex justify-center space-x-2">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <Input
+            key={index}
+            ref={(el) => (inputRefs.current[index] = el)}
+            type="text"
+            maxLength={1}
+            value={value[index] || ''}
+            onChange={(e) => handleChange(index, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(index, e)}
+            disabled={disabled}
+            className="w-12 h-12 text-center text-lg font-semibold border-2 border-green-200 focus:border-green-500 bg-green-50 dark:bg-green-950"
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Email OTP Input Component
+const EmailOTPInput = ({ value, onChange, disabled }: { value: string; onChange: (value: string) => void; disabled: boolean }) => {
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  
+  useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
+
+  const handleChange = (index: number, val: string) => {
+    if (!/^\d*$/.test(val)) return;
+    
+    const newValue = value.split('');
+    newValue[index] = val;
+    const newOTP = newValue.join('');
+    onChange(newOTP);
+    
+    if (val && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !value[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="text-center">
+        <div className="flex items-center justify-center mb-2">
+          <Mail className="w-5 h-5 text-blue-600 mr-2" />
+          <span className="text-sm font-medium text-blue-600">Email OTP</span>
+        </div>
+        <p className="text-xs text-muted-foreground">Enter the 6-digit code sent to your email</p>
+      </div>
+      <div className="flex justify-center space-x-2">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <Input
+            key={index}
+            ref={(el) => (inputRefs.current[index] = el)}
+            type="text"
+            maxLength={1}
+            value={value[index] || ''}
+            onChange={(e) => handleChange(index, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(index, e)}
+            disabled={disabled}
+            className="w-12 h-12 text-center text-lg font-semibold border-2 border-blue-200 focus:border-blue-500 bg-blue-50 dark:bg-blue-950"
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const steps = [
   { id: 1, title: "Contact & Verification", icon: Smartphone },
@@ -30,6 +140,8 @@ export default function Register() {
   const [captchaCode, setCaptchaCode] = useState(generateCaptcha());
   const [otpSent, setOtpSent] = useState(false);
   const [countdown, setCountdown] = useState(0);
+  const [mobileOtpVerified, setMobileOtpVerified] = useState(false);
+  const [emailOtpVerified, setEmailOtpVerified] = useState(false);
   const { toast } = useToast();
   
   const form = useForm<RegisterFormData>({
@@ -43,6 +155,8 @@ export default function Register() {
       address: "",
       captcha: "",
       otp: "",
+      mobileOtp: "",
+      emailOtp: "",
       password: "",
       confirmPassword: "",
     }
@@ -111,14 +225,14 @@ export default function Register() {
         }
         break;
       case 2:
-        // Validate step 2: OTP
-        const step2Fields = await form.trigger(["otp"]);
-        if (step2Fields && otpSent) {
+        // Validate step 2: OTP (both mobile and email)
+        const step2Fields = await form.trigger(["mobileOtp", "emailOtp"]);
+        if (step2Fields && mobileOtpVerified && emailOtpVerified) {
           isValid = true;
         } else {
           toast({
-            title: "OTP Required",
-            description: "Please enter the OTP sent to your mobile and email.",
+            title: "OTP Verification Required",
+            description: "Please verify both mobile and email OTP to continue.",
             variant: "destructive",
           });
         }
@@ -278,9 +392,9 @@ export default function Register() {
         return (
           <div className="space-y-6">
             <div className="text-center">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white">OTP Verification</h3>
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Dual OTP Verification</h3>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Enter the 6-digit code sent to your mobile and email
+                Verify both mobile and email to continue registration
               </p>
             </div>
 
@@ -291,48 +405,124 @@ export default function Register() {
                   onClick={sendOTP}
                   className="bg-navyblue hover:bg-darkblue text-white dark:bg-golden dark:hover:bg-goldenrod1 dark:text-navyblue"
                 >
-                  Send OTP
+                  Send OTP to Mobile & Email
                 </Button>
               </div>
             ) : (
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="otp"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-900 dark:text-white">Enter OTP *</FormLabel>
-                      <FormControl>
-                        <Input 
-                          {...field} 
-                          placeholder="123456" 
-                          maxLength={6}
-                          className={`border-gray-300 dark:border-gray-600 focus:border-golden dark:focus:border-golden text-center text-lg tracking-widest ${
-                            form.formState.errors.otp ? 'border-red-500 dark:border-red-500' : ''
-                          }`}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Mobile OTP */}
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="mobileOtp"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <MobileOTPInput 
+                              value={field.value}
+                              onChange={field.onChange}
+                              disabled={false}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="text-center">
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          const mobileOtp = form.getValues("mobileOtp");
+                          if (mobileOtp === "123456") {
+                            setMobileOtpVerified(true);
+                            toast({
+                              title: "Mobile OTP Verified",
+                              description: "Mobile verification successful!",
+                            });
+                          } else {
+                            toast({
+                              title: "Invalid Mobile OTP",
+                              description: "Please enter the correct code.",
+                              variant: "destructive",
+                            });
+                          }
+                        }}
+                        className={`w-full ${mobileOtpVerified ? 'bg-green-600 hover:bg-green-700' : 'bg-navyblue hover:bg-darkblue'} text-white`}
+                        disabled={mobileOtpVerified}
+                      >
+                        {mobileOtpVerified ? "✓ Mobile Verified" : "Verify Mobile OTP"}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Email OTP */}
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="emailOtp"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <EmailOTPInput 
+                              value={field.value}
+                              onChange={field.onChange}
+                              disabled={false}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="text-center">
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          const emailOtp = form.getValues("emailOtp");
+                          if (emailOtp === "123456") {
+                            setEmailOtpVerified(true);
+                            toast({
+                              title: "Email OTP Verified",
+                              description: "Email verification successful!",
+                            });
+                          } else {
+                            toast({
+                              title: "Invalid Email OTP",
+                              description: "Please enter the correct code.",
+                              variant: "destructive",
+                            });
+                          }
+                        }}
+                        className={`w-full ${emailOtpVerified ? 'bg-green-600 hover:bg-green-700' : 'bg-navyblue hover:bg-darkblue'} text-white`}
+                        disabled={emailOtpVerified}
+                      >
+                        {emailOtpVerified ? "✓ Email Verified" : "Verify Email OTP"}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
                 
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">
-                    Sent to: {form.getValues("contactNumber")} & {form.getValues("email")}
-                  </span>
-                  {countdown > 0 ? (
-                    <span className="text-gray-500">Resend in {countdown}s</span>
-                  ) : (
-                    <Button 
-                      type="button" 
-                      variant="link" 
-                      onClick={sendOTP}
-                      className="text-navyblue dark:text-golden p-0 h-auto"
-                    >
-                      Resend OTP
-                    </Button>
-                  )}
+                <div className="text-center space-y-2">
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    Codes sent to: <strong>{form.getValues("contactNumber")}</strong> & <strong>{form.getValues("email")}</strong>
+                  </div>
+                  <div>
+                    {countdown > 0 ? (
+                      <span className="text-gray-500 text-sm">Resend in {countdown}s</span>
+                    ) : (
+                      <Button 
+                        type="button" 
+                        variant="link" 
+                        onClick={sendOTP}
+                        className="text-navyblue dark:text-golden p-0 h-auto text-sm"
+                      >
+                        Resend Both OTPs
+                      </Button>
+                    )}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Test OTP: <strong>123456</strong> for both mobile and email
+                  </div>
                 </div>
               </div>
             )}

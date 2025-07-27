@@ -402,13 +402,20 @@ export default function Login() {
                 </Button>
               </div>
 
-              <div className="text-center">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Don't have an account?{" "}
-                  <Link href="/register" className="font-medium text-golden hover:text-goldenrod1">
-                    Sign up now
+              <div className="text-center space-y-2">
+                <div>
+                  <Link href="/forgot-password" className="text-sm font-medium text-golden hover:text-goldenrod1">
+                    Forgot your password?
                   </Link>
-                </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Don't have an account?{" "}
+                    <Link href="/register" className="font-medium text-golden hover:text-goldenrod1">
+                      Sign up now
+                    </Link>
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>

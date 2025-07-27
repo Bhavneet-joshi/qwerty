@@ -17,6 +17,7 @@ import Services from "@/pages/Services";
 import Contact from "@/pages/Contact";
 import Policy from "@/pages/Policy";
 import Register from "@/pages/Register";
+import ForgotPassword from "@/pages/ForgotPassword";
 
 // Client pages
 import Layout from "@/components/Layout";
@@ -63,6 +64,7 @@ function Router() {
           <Route path="/contact" component={Contact} />
           <Route path="/policy" component={Policy} />
           <Route path="/register" component={Register} />
+          <Route path="/forgot-password" component={ForgotPassword} />
         </>
       ) : (
         <>

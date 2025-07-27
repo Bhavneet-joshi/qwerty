@@ -172,6 +172,8 @@ export const registerUserSchema = z.object({
   address: z.string().min(10, "Address must be at least 10 characters"),
   captcha: z.string().min(1, "Please complete the CAPTCHA"),
   otp: z.string().length(6, "OTP must be 6 digits"),
+  mobileOtp: z.string().length(6, "Mobile OTP must be 6 digits"),
+  emailOtp: z.string().length(6, "Email OTP must be 6 digits"),
   password: z.string()
     .min(8, "Password must be at least 8 characters")
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"),
