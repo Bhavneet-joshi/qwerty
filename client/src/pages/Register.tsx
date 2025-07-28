@@ -213,38 +213,107 @@ export default function Register() {
 
   const validateAndNextStep = async () => {
     let isValid = false;
+    let errorMessage = "";
     
     switch (currentStep) {
       case 1:
         // Validate step 1: Mobile, Email, CAPTCHA
         const step1Fields = await form.trigger(["contactNumber", "email", "captcha"]);
-        if (step1Fields && form.getValues("captcha") === captchaCode) {
+        const captchaValue = form.getValues("captcha");
+        const contactNumber = form.getValues("contactNumber");
+        const email = form.getValues("email");
+        
+        if (!contactNumber || contactNumber.length < 10) {
+          form.setError("contactNumber", { message: "Please enter a valid 10-digit mobile number" });
+          errorMessage = "Please enter a valid mobile number";
+        } else if (!email || !email.includes("@")) {
+          form.setError("email", { message: "Please enter a valid email address" });
+          errorMessage = "Please enter a valid email address";
+        } else if (!captchaValue) {
+          form.setError("captcha", { message: "Please enter the CAPTCHA code" });
+          errorMessage = "Please enter the CAPTCHA code";
+        } else if (captchaValue !== captchaCode) {
+          form.setError("captcha", { message: "CAPTCHA does not match. Please try again." });
+          errorMessage = "CAPTCHA does not match";
+        } else {
           isValid = true;
-        } else if (form.getValues("captcha") !== captchaCode) {
-          form.setError("captcha", { message: "CAPTCHA does not match" });
         }
         break;
+        
       case 2:
         // Validate step 2: OTP (both mobile and email)
-        const step2Fields = await form.trigger(["mobileOtp", "emailOtp"]);
-        if (step2Fields && mobileOtpVerified && emailOtpVerified) {
-          isValid = true;
-        } else {
+        if (!otpSent) {
+          errorMessage = "Please send OTP first";
           toast({
-            title: "OTP Verification Required",
-            description: "Please verify both mobile and email OTP to continue.",
+            title: "OTP Required",
+            description: "Please send OTP to your mobile and email first.",
             variant: "destructive",
           });
+        } else if (!mobileOtpVerified) {
+          errorMessage = "Please verify your mobile OTP";
+          toast({
+            title: "Mobile OTP Required",
+            description: "Please verify your mobile OTP to continue.",
+            variant: "destructive",
+          });
+        } else if (!emailOtpVerified) {
+          errorMessage = "Please verify your email OTP";
+          toast({
+            title: "Email OTP Required",
+            description: "Please verify your email OTP to continue.",
+            variant: "destructive",
+          });
+        } else {
+          isValid = true;
         }
         break;
+        
       case 3:
         // Validate step 3: Name and Address
-        isValid = await form.trigger(["firstName", "lastName", "address"]);
+        const firstName = form.getValues("firstName");
+        const lastName = form.getValues("lastName");
+        const address = form.getValues("address");
+        
+        if (!firstName || firstName.length < 2) {
+          form.setError("firstName", { message: "First name must be at least 2 characters" });
+          errorMessage = "Please enter a valid first name";
+        } else if (!lastName || lastName.length < 2) {
+          form.setError("lastName", { message: "Last name must be at least 2 characters" });
+          errorMessage = "Please enter a valid last name";
+        } else if (!address || address.length < 10) {
+          form.setError("address", { message: "Address must be at least 10 characters" });
+          errorMessage = "Please enter a complete address";
+        } else {
+          isValid = true;
+        }
         break;
+        
       case 4:
         // Validate step 4: Password
-        isValid = await form.trigger(["password", "confirmPassword"]);
+        const password = form.getValues("password");
+        const confirmPassword = form.getValues("confirmPassword");
+        
+        if (!password || password.length < 8) {
+          form.setError("password", { message: "Password must be at least 8 characters" });
+          errorMessage = "Password must be at least 8 characters";
+        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
+          form.setError("password", { message: "Password must contain uppercase, lowercase, and number" });
+          errorMessage = "Password must contain uppercase, lowercase, and number";
+        } else if (password !== confirmPassword) {
+          form.setError("confirmPassword", { message: "Passwords do not match" });
+          errorMessage = "Passwords do not match";
+        } else {
+          isValid = true;
+        }
         break;
+    }
+
+    if (!isValid && errorMessage) {
+      toast({
+        title: "Validation Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
     }
 
     if (isValid && currentStep < steps.length) {
@@ -550,7 +619,9 @@ export default function Register() {
                       <Input 
                         {...field} 
                         placeholder="John"
-                        className="border-gray-300 dark:border-gray-600"
+                        className={`border-gray-300 dark:border-gray-600 focus:border-golden dark:focus:border-golden ${
+                          form.formState.errors.firstName ? 'border-red-500 dark:border-red-500' : ''
+                        }`}
                       />
                     </FormControl>
                     <FormMessage />
@@ -568,7 +639,9 @@ export default function Register() {
                       <Input 
                         {...field} 
                         placeholder="Doe"
-                        className="border-gray-300 dark:border-gray-600"
+                        className={`border-gray-300 dark:border-gray-600 focus:border-golden dark:focus:border-golden ${
+                          form.formState.errors.lastName ? 'border-red-500 dark:border-red-500' : ''
+                        }`}
                       />
                     </FormControl>
                     <FormMessage />
@@ -608,7 +681,9 @@ export default function Register() {
                       {...field} 
                       placeholder="Enter your complete address"
                       rows={3}
-                      className="border-gray-300 dark:border-gray-600"
+                      className={`border-gray-300 dark:border-gray-600 focus:border-golden dark:focus:border-golden ${
+                        form.formState.errors.address ? 'border-red-500 dark:border-red-500' : ''
+                      }`}
                     />
                   </FormControl>
                   <FormMessage />
@@ -642,7 +717,9 @@ export default function Register() {
                       {...field} 
                       type="password" 
                       placeholder="Create a strong password"
-                      className="border-gray-300 dark:border-gray-600"
+                      className={`border-gray-300 dark:border-gray-600 focus:border-golden dark:focus:border-golden ${
+                        form.formState.errors.password ? 'border-red-500 dark:border-red-500' : ''
+                      }`}
                     />
                   </FormControl>
                   <FormMessage />
@@ -679,7 +756,9 @@ export default function Register() {
                       {...field} 
                       type="password" 
                       placeholder="Confirm your password"
-                      className="border-gray-300 dark:border-gray-600"
+                      className={`border-gray-300 dark:border-gray-600 focus:border-golden dark:focus:border-golden ${
+                        form.formState.errors.confirmPassword ? 'border-red-500 dark:border-red-500' : ''
+                      }`}
                     />
                   </FormControl>
                   <FormMessage />
@@ -781,28 +860,27 @@ export default function Register() {
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex justify-between items-center mb-4">
-              {steps.map((step, index) => {
+              {steps.map((step) => {
                 const Icon = step.icon;
                 return (
-                  <div key={step.id} className="flex items-center">
+                  <div
+                    key={step.id}
+                    className={`flex items-center ${
+                      step.id <= currentStep ? "text-navyblue dark:text-golden" : "text-gray-400"
+                    }`}
+                  >
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors ${
+                      className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
                         step.id <= currentStep
                           ? "bg-navyblue dark:bg-golden border-navyblue dark:border-golden text-white dark:text-navyblue"
-                          : "border-gray-300 dark:border-gray-600 text-gray-400"
+                          : "border-gray-300 dark:border-gray-600"
                       }`}
                     >
                       <Icon className="h-5 w-5" />
                     </div>
-                    {index < steps.length - 1 && (
-                      <div 
-                        className={`w-12 h-0.5 mx-2 ${
-                          step.id < currentStep 
-                            ? "bg-navyblue dark:bg-golden" 
-                            : "bg-gray-300 dark:bg-gray-600"
-                        }`} 
-                      />
-                    )}
+                    <span className="ml-2 text-sm font-medium hidden sm:block">
+                      {step.title}
+                    </span>
                   </div>
                 );
               })}
@@ -814,7 +892,7 @@ export default function Register() {
           <Card className="border-gray-200 dark:border-gray-700 shadow-lg">
             <CardHeader className="text-center">
               <CardTitle className="text-navyblue dark:text-golden">
-                Step {currentStep} of {steps.length}
+                Step {currentStep} of {steps.length}: {steps[currentStep - 1]?.title}
               </CardTitle>
             </CardHeader>
             <CardContent>

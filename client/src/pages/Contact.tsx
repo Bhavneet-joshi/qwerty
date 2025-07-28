@@ -86,8 +86,8 @@ export default function Contact() {
 
         {/* Contact Information & Form */}
         <section className="py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Contact Information */}
               <div className="lg:col-span-1">
                 <div className="space-y-8">
@@ -175,7 +175,7 @@ export default function Contact() {
               </div>
 
               {/* Contact Form */}
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-1">
                 <Card className="border-golden/20 dark:border-golden/30 shadow-lg">
                   <CardHeader>
                     <CardTitle className="text-2xl text-navyblue dark:text-golden flex items-center">
@@ -348,49 +348,37 @@ export default function Contact() {
             </div>
             
             <div className="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden shadow-lg">
-              {/* Interactive Map Placeholder */}
-              <div className="relative h-96 bg-gradient-to-br from-blue-100 to-green-100 dark:from-blue-900 dark:to-green-900">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center p-8 bg-white/90 dark:bg-gray-800/90 rounded-lg shadow-lg max-w-md">
-                    <MapPin className="h-12 w-12 text-golden mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-navyblue dark:text-golden mb-2">
-                      HLSG Industries Headquarters
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300 mb-4">
-                      123 Business Park, Sector 62<br />
-                      Noida, Uttar Pradesh 201309
-                    </p>
-                    <div className="space-y-2 text-sm">
-                      <p className="text-gray-500 dark:text-gray-400">
-                        <strong>Nearest Metro:</strong> Sector 62 (Blue Line)
+              {/* Interactive Map - Embedded Google Maps */}
+              <div className="relative h-96">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3503.0157842146894!2d77.36568731455415!3d28.624567582421658!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce5a43173357b%3A0x37ffce30c87cc03f!2sSector%2062%2C%20Noida%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1643234567890!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="HLSG Industries Location - Sector 62, Noida"
+                  className="w-full h-full"
+                ></iframe>
+                
+                {/* Overlay with company information */}
+                <div className="absolute top-4 left-4 bg-white/95 dark:bg-gray-800/95 rounded-lg shadow-lg p-4 max-w-sm">
+                  <div className="flex items-start space-x-3">
+                    <MapPin className="h-6 w-6 text-goldenrod1 mt-1 flex-shrink-0" />
+                    <div>
+                      <h3 className="text-lg font-semibold text-navyblue dark:text-blue-400 mb-1">
+                        HLSG Industries
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                        123 Business Park, Sector 62<br />
+                        Noida, Uttar Pradesh 201309
                       </p>
-                      <p className="text-gray-500 dark:text-gray-400">
-                        <strong>Parking:</strong> Available on-site
-                      </p>
+                      <div className="space-y-1 text-xs text-gray-500 dark:text-gray-400">
+                        <p><strong>Metro:</strong> Sector 62 (Blue Line)</p>
+                        <p><strong>Parking:</strong> Available on-site</p>
+                      </div>
                     </div>
-                    <Button 
-                      className="mt-4 bg-golden hover:bg-goldenrod1 text-navyblue"
-                      onClick={() => window.open('https://maps.google.com/?q=Sector+62+Noida+Uttar+Pradesh', '_blank')}
-                    >
-                      Open in Google Maps
-                    </Button>
-                  </div>
-                </div>
-                
-                {/* Map Grid Overlay */}
-                <div className="absolute inset-0 opacity-20">
-                  <div className="grid grid-cols-8 grid-rows-6 h-full">
-                    {Array.from({ length: 48 }).map((_, i) => (
-                      <div key={i} className="border border-gray-400"></div>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Location Marker */}
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <div className="relative">
-                    <div className="animate-ping absolute h-6 w-6 rounded-full bg-red-400 opacity-75"></div>
-                    <div className="relative h-6 w-6 rounded-full bg-red-600 border-2 border-white shadow-lg"></div>
                   </div>
                 </div>
               </div>
@@ -399,19 +387,32 @@ export default function Contact() {
               <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-600">
                 <div className="flex justify-between items-center">
                   <div className="flex space-x-4">
-                    <button className="text-sm text-gray-600 dark:text-gray-400 hover:text-golden transition-colors">
+                    <button 
+                      onClick={() => window.open('https://maps.google.com/?q=Sector+62+Noida+Uttar+Pradesh&t=k', '_blank')}
+                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-goldenrod1 transition-colors"
+                    >
                       Satellite View
                     </button>
-                    <button className="text-sm text-gray-600 dark:text-gray-400 hover:text-golden transition-colors">
+                    <button 
+                      onClick={() => window.open('https://maps.google.com/?q=Sector+62+Noida+Uttar+Pradesh&layer=c&cbll=28.624567,77.365687', '_blank')}
+                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-goldenrod1 transition-colors"
+                    >
                       Street View
                     </button>
-                    <button className="text-sm text-gray-600 dark:text-gray-400 hover:text-golden transition-colors">
-                      Directions
+                    <button 
+                      onClick={() => window.open('https://maps.google.com/maps/dir//Sector+62+Noida+Uttar+Pradesh', '_blank')}
+                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-goldenrod1 transition-colors"
+                    >
+                      Get Directions
                     </button>
                   </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Click to open full map view
-                  </div>
+                  <Button 
+                    size="sm"
+                    className="bg-goldenrod1 hover:bg-goldenrod2 text-navyblue dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:text-white"
+                    onClick={() => window.open('https://maps.google.com/?q=Sector+62+Noida+Uttar+Pradesh', '_blank')}
+                  >
+                    Open in Google Maps
+                  </Button>
                 </div>
               </div>
             </div>

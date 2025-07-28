@@ -410,6 +410,7 @@ export default function Login() {
                 </p>
               </div>
             </div>
+            
           </div>
         );
 
@@ -511,39 +512,38 @@ export default function Login() {
 
           <Card className="bg-white dark:bg-gray-800 shadow-xl border border-golden/20">
             <CardHeader className="space-y-4">
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-xl text-navyblue dark:text-golden">
-                  Step {currentStep} of {steps.length}
-                </CardTitle>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  {steps[currentStep - 1]?.title}
+              <CardTitle className="text-xl text-navyblue dark:text-golden text-center">
+                Step {currentStep} of {steps.length}: {steps[currentStep - 1]?.title}
+              </CardTitle>
+              
+              <div className="mb-8">
+                <div className="flex justify-between items-center mb-4">
+                  {steps.map((step) => {
+                    const Icon = step.icon;
+                    return (
+                      <div
+                        key={step.id}
+                        className={`flex items-center ${
+                          step.id <= currentStep ? "text-navyblue dark:text-golden" : "text-gray-400"
+                        }`}
+                      >
+                        <div
+                          className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
+                            step.id <= currentStep
+                              ? "bg-navyblue dark:bg-golden border-navyblue dark:border-golden text-white dark:text-navyblue"
+                              : "border-gray-300 dark:border-gray-600"
+                          }`}
+                        >
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <span className="ml-2 text-sm font-medium hidden sm:block">
+                          {step.title}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
-              </div>
-              
-              <Progress 
-                value={progress} 
-                className="w-full h-2"
-                style={{
-                  background: 'linear-gradient(to right, #DAA520 0%, #DAA520 100%)'
-                }}
-              />
-              
-              <div className="flex justify-center space-x-2">
-                {steps.map((step, index) => {
-                  const Icon = step.icon;
-                  return (
-                    <div
-                      key={step.id}
-                      className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                        index + 1 <= currentStep
-                          ? "bg-golden text-navyblue"
-                          : "bg-gray-200 dark:bg-gray-700 text-gray-400"
-                      }`}
-                    >
-                      <Icon className="h-4 w-4" />
-                    </div>
-                  );
-                })}
+                <Progress value={progress} className="h-2" />
               </div>
             </CardHeader>
             

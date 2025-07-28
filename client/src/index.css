@@ -206,11 +206,11 @@
   }
   
   .gradient-bg {
-    background: linear-gradient(135deg, var(--navyblue) 0%, var(--darkblue) 100%);
+    background-color: var(--navyblue);
   }
   
   .hero-gradient {
-    background: linear-gradient(135deg, var(--navyblue) 0%, var(--darkblue) 50%, var(--goldenrod1) 100%);
+    background-color: var(--navyblue);
   }
   
   .card-hover:hover {
@@ -219,25 +219,25 @@
   }
   
   .service-card:hover {
-    background: linear-gradient(135deg, var(--navyblue) 0%, var(--darkblue) 100%);
+    background-color: var(--navyblue);
     color: white;
   }
   
   .btn-primary {
-    background: linear-gradient(135deg, var(--navyblue) 0%, var(--darkblue) 100%);
+    background-color: var(--navyblue);
   }
   
   .btn-primary:hover {
-    background: linear-gradient(135deg, var(--darkblue) 0%, var(--navyblue) 100%);
+    background-color: var(--darkblue);
     transform: translateY(-1px);
   }
   
   .btn-golden {
-    background: linear-gradient(135deg, var(--goldenrod1) 0%, var(--goldenrod2) 100%);
+    background-color: var(--goldenrod1);
   }
   
   .btn-golden:hover {
-    background: linear-gradient(135deg, var(--goldenrod2) 0%, var(--goldenrod1) 100%);
+    background-color: var(--goldenrod2);
     transform: translateY(-1px);
   }
 }

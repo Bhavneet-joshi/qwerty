@@ -131,13 +131,13 @@ export default function Services() {
 
   return (
     <PublicLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         {/* Hero Section */}
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-white dark:bg-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h1 className="text-4xl md:text-5xl font-bold text-navyblue mb-6">Our Services</h1>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <h1 className="text-4xl md:text-5xl font-bold text-navyblue dark:text-blue-400 mb-6">Our Services</h1>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
                 Comprehensive solutions designed to transform your business and drive sustainable growth through innovation and expertise.
               </p>
             </div>
@@ -145,21 +145,21 @@ export default function Services() {
         </section>
 
         {/* Services Grid */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-16 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {services.map((service, index) => (
-                <Card key={index} className="service-card bg-white shadow-lg transition-all duration-300 hover:shadow-xl card-hover">
+                <Card key={index} className="service-card bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 hover:shadow-xl card-hover">
                   <CardHeader>
                     <div className="flex items-center justify-between mb-4">
-                      <div className="w-16 h-16 bg-gradient-to-r from-navyblue to-goldenrod1 rounded-lg flex items-center justify-center">
+                      <div className="w-16 h-16 bg-navyblue dark:bg-blue-600 rounded-lg flex items-center justify-center">
                         {service.icon}
                       </div>
-                      <Badge variant="secondary" className="bg-gray-100 text-gray-800">
+                      <Badge variant="secondary" className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
                         {service.category}
                       </Badge>
                     </div>
-                    <CardTitle className="text-xl text-navyblue">{service.title}</CardTitle>
+                    <CardTitle className="text-xl text-navyblue dark:text-blue-400">{service.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-600 mb-6">{service.description}</p>
