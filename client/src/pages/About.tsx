@@ -9,7 +9,7 @@ export default function About() {
     <PublicLayout>
       <div className="min-h-screen bg-white dark:bg-gray-900">
         {/* Hero Section */}
-        <section className="py-16 bg-gradient-to-r from-navyblue to-darkblue dark:from-gray-800 dark:to-gray-900">
+        <section className="py-16 bg-navyblue dark:bg-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center text-white">
               <h1 className="text-4xl md:text-5xl font-bold mb-6">About HLSG Industries</h1>
@@ -27,7 +27,7 @@ export default function About() {
               <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow cursor-pointer group">
                 <Link href="/about/founders">
                   <CardContent className="p-8 text-center">
-                    <div className="w-16 h-16 bg-gradient-to-r from-navyblue to-darkblue dark:from-golden dark:to-goldenrod1 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <div className="w-16 h-16 bg-navyblue dark:bg-golden rounded-full flex items-center justify-center mx-auto mb-6">
                       <Users className="h-8 w-8 text-white dark:text-navyblue" />
                     </div>
                     <h3 className="text-2xl font-bold text-navyblue dark:text-golden mb-4">About Founders</h3>
@@ -45,7 +45,7 @@ export default function About() {
               <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow cursor-pointer group">
                 <Link href="/about/company">
                   <CardContent className="p-8 text-center">
-                    <div className="w-16 h-16 bg-gradient-to-r from-navyblue to-darkblue dark:from-golden dark:to-goldenrod1 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <div className="w-16 h-16 bg-navyblue dark:bg-golden rounded-full flex items-center justify-center mx-auto mb-6">
                       <Building2 className="h-8 w-8 text-white dark:text-navyblue" />
                     </div>
                     <h3 className="text-2xl font-bold text-navyblue dark:text-golden mb-4">About Company</h3>
@@ -117,7 +117,7 @@ export default function About() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-navyblue to-goldenrod1 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-navyblue dark:bg-golden rounded-full flex items-center justify-center mx-auto mb-4">
                     <Target className="h-8 w-8 text-white" />
                   </div>
                   <CardTitle className="text-navyblue dark:text-golden">Our Mission</CardTitle>
@@ -131,7 +131,7 @@ export default function About() {
 
               <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-navyblue to-goldenrod1 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-navyblue dark:bg-golden rounded-full flex items-center justify-center mx-auto mb-4">
                     <Globe className="h-8 w-8 text-white" />
                   </div>
                   <CardTitle className="text-navyblue dark:text-golden">Our Vision</CardTitle>
@@ -145,7 +145,7 @@ export default function About() {
 
               <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-navyblue to-goldenrod1 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-navyblue dark:bg-golden rounded-full flex items-center justify-center mx-auto mb-4">
                     <Award className="h-8 w-8 text-white" />
                   </div>
                   <CardTitle className="text-navyblue dark:text-golden">Our Values</CardTitle>

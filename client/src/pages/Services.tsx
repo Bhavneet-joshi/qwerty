@@ -136,8 +136,8 @@ export default function Services() {
         <section className="py-16 bg-white dark:bg-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h1 className="text-4xl md:text-5xl font-bold text-navyblue dark:text-blue-400 mb-6">Our Services</h1>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-navyblue dark:text-golden mb-6">Our Services</h1>
+              <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
                 Comprehensive solutions designed to transform your business and drive sustainable growth through innovation and expertise.
               </p>
             </div>
@@ -147,7 +147,7 @@ export default function Services() {
         {/* Services Grid */}
         <section className="py-16 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {services.map((service, index) => (
                 <Card key={index} className="service-card bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 hover:shadow-xl card-hover">
                   <CardHeader>
@@ -159,22 +159,22 @@ export default function Services() {
                         {service.category}
                       </Badge>
                     </div>
-                    <CardTitle className="text-xl text-navyblue dark:text-blue-400">{service.title}</CardTitle>
+                    <CardTitle className="text-lg sm:text-xl text-navyblue dark:text-golden">{service.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600 mb-6">{service.description}</p>
+                    <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm sm:text-base">{service.description}</p>
                     
                     <div className="space-y-2 mb-6">
                       {service.features.map((feature, featureIndex) => (
                         <div key={featureIndex} className="flex items-center space-x-2">
                           <div className="w-1.5 h-1.5 bg-goldenrod1 rounded-full"></div>
-                          <span className="text-sm text-gray-600">{feature}</span>
+                          <span className="text-sm text-gray-600 dark:text-gray-400">{feature}</span>
                         </div>
                       ))}
                     </div>
                     
                     <Link href="/contact">
-                      <Button className="w-full text-navyblue border-navyblue hover:bg-navyblue hover:text-white" variant="outline">
+                      <Button className="w-full text-navyblue border-navyblue hover:bg-navyblue hover:text-white dark:text-golden dark:border-golden dark:hover:bg-golden dark:hover:text-navyblue" variant="outline">
                         Get This Service
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
@@ -187,16 +187,16 @@ export default function Services() {
         </section>
 
         {/* Process Section */}
-        <section className="py-16 bg-white">
+        <section className="py-16 bg-white dark:bg-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-navyblue mb-6">Our Process</h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <h2 className="text-2xl sm:text-3xl font-bold text-navyblue dark:text-golden mb-6">Our Process</h2>
+              <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
                 A proven methodology that ensures successful project delivery and client satisfaction.
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
               {[
                 {
                   step: "01",
@@ -220,11 +220,11 @@ export default function Services() {
                 }
               ].map((process, index) => (
                 <div key={index} className="text-center">
-                  <div className="w-16 h-16 bg-gradient-to-r from-navyblue to-goldenrod1 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-navyblue dark:bg-golden rounded-full flex items-center justify-center mx-auto mb-4">
                     <span className="text-white font-bold text-lg">{process.step}</span>
                   </div>
-                  <h3 className="text-xl font-bold text-navyblue mb-4">{process.title}</h3>
-                  <p className="text-gray-600">{process.description}</p>
+                  <h3 className="text-lg sm:text-xl font-bold text-navyblue dark:text-golden mb-4">{process.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">{process.description}</p>
                 </div>
               ))}
             </div>
@@ -232,16 +232,16 @@ export default function Services() {
         </section>
 
         {/* Industries Section */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-16 bg-gray-50 dark:bg-gray-900">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-navyblue mb-6">Industries We Serve</h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <h2 className="text-2xl sm:text-3xl font-bold text-navyblue dark:text-golden mb-6">Industries We Serve</h2>
+              <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
                 Our expertise spans across multiple industries, delivering specialized solutions for unique challenges.
               </p>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
               {[
                 "Healthcare",
                 "Finance",
@@ -256,12 +256,12 @@ export default function Services() {
                 "Media",
                 "Telecommunications"
               ].map((industry, index) => (
-                <Card key={index} className="card-hover transition-all duration-200 text-center">
-                  <CardContent className="p-6">
-                    <div className="w-12 h-12 bg-gradient-to-r from-navyblue to-goldenrod1 rounded-lg flex items-center justify-center mx-auto mb-3">
-                      <Target className="h-6 w-6 text-white" />
+                <Card key={index} className="card-hover transition-all duration-200 text-center bg-white dark:bg-gray-800">
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-navyblue dark:bg-golden rounded-lg flex items-center justify-center mx-auto mb-3">
+                      <Target className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                     </div>
-                    <h3 className="font-semibold text-navyblue">{industry}</h3>
+                    <h3 className="font-semibold text-navyblue dark:text-golden text-sm sm:text-base">{industry}</h3>
                   </CardContent>
                 </Card>
               ))}
@@ -270,20 +270,20 @@ export default function Services() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 gradient-bg">
+        <section className="py-16 bg-navyblue dark:bg-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Transform Your Business?</h2>
-            <p className="text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white dark:text-golden mb-6">Ready to Transform Your Business?</h2>
+            <p className="text-lg sm:text-xl text-gray-200 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
               Let's discuss how our services can help you achieve your business objectives and drive sustainable growth.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/contact">
-                <Button className="px-8 py-4 text-lg font-medium text-navyblue bg-white rounded-lg hover:bg-gray-100 transition-all duration-200 shadow-lg">
+                <Button className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium text-navyblue bg-white rounded-lg hover:bg-gray-100 transition-all duration-200 shadow-lg">
                   Get Started Today
                 </Button>
               </Link>
               <Link href="/contact">
-                <Button className="px-8 py-4 text-lg font-medium text-white btn-golden rounded-lg transition-all duration-200 shadow-lg">
+                <Button className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium text-navyblue bg-goldenrod1 hover:bg-goldenrod2 rounded-lg transition-all duration-200 shadow-lg">
                   Schedule Consultation
                 </Button>
               </Link>

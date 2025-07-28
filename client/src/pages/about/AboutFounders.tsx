@@ -49,7 +49,7 @@ export default function AboutFounders() {
     <PublicLayout>
       <div className="min-h-screen bg-white dark:bg-gray-900">
         {/* Hero Section */}
-        <section className="py-16 bg-gradient-to-r from-navyblue to-darkblue dark:from-gray-800 dark:to-gray-900">
+        <section className="py-16 bg-navyblue dark:bg-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center text-white">
               <h1 className="text-4xl md:text-5xl font-bold mb-6">Meet Our Founders</h1>

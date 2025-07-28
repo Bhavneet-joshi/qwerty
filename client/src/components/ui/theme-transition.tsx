@@ -37,8 +37,8 @@ export function ThemeTransition() {
             fixed inset-0 z-40 pointer-events-none
             transition-all duration-150 ease-out
             ${theme === 'dark' 
-              ? 'bg-gradient-to-br from-gray-900/10 to-golden/5' 
-              : 'bg-gradient-to-br from-white/10 to-navyblue/5'
+              ? 'bg-gray-900/10' 
+              : 'bg-white/10'
             }
           `}
           style={{

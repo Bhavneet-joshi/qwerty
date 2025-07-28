@@ -62,7 +62,7 @@ const MobileOTPInput = ({ value, onChange, disabled }: { value: string; onChange
         </div>
         <p className="text-xs text-muted-foreground">Enter the 6-digit code sent to your mobile</p>
       </div>
-      <div className="flex justify-center space-x-2">
+      <div className="flex justify-center space-x-1 sm:space-x-2">
         {Array.from({ length: 6 }).map((_, index) => (
           <Input
             key={index}
@@ -73,7 +73,7 @@ const MobileOTPInput = ({ value, onChange, disabled }: { value: string; onChange
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             disabled={disabled}
-            className="w-12 h-12 text-center text-lg font-semibold border-2 border-green-200 focus:border-green-500 bg-green-50 dark:bg-green-950"
+            className="w-10 h-10 sm:w-12 sm:h-12 text-center text-lg font-semibold border-2 border-green-200 focus:border-green-500 bg-green-50 dark:bg-green-950"
           />
         ))}
       </div>
@@ -117,7 +117,7 @@ const EmailOTPInput = ({ value, onChange, disabled }: { value: string; onChange:
         </div>
         <p className="text-xs text-muted-foreground">Enter the 6-digit code sent to your email</p>
       </div>
-      <div className="flex justify-center space-x-2">
+      <div className="flex justify-center space-x-1 sm:space-x-2">
         {Array.from({ length: 6 }).map((_, index) => (
           <Input
             key={index}
@@ -128,7 +128,7 @@ const EmailOTPInput = ({ value, onChange, disabled }: { value: string; onChange:
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             disabled={disabled}
-            className="w-12 h-12 text-center text-lg font-semibold border-2 border-blue-200 focus:border-blue-500 bg-blue-50 dark:bg-blue-950"
+            className="w-10 h-10 sm:w-12 sm:h-12 text-center text-lg font-semibold border-2 border-blue-200 focus:border-blue-500 bg-blue-50 dark:bg-blue-950"
           />
         ))}
       </div>
@@ -147,6 +147,8 @@ export default function Login() {
   const [otpSent, setOtpSent] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [mobileOtpVerified, setMobileOtpVerified] = useState(false);
+  const [emailOtpVerified, setEmailOtpVerified] = useState(false);
   const { toast } = useToast();
   
   const form = useForm<LoginFormData>({
@@ -219,16 +221,15 @@ export default function Login() {
         }
         break;
       case 2:
-        // Validate step 2: Both Mobile and Email OTPs
-        const step2Fields = await form.trigger(["mobileOtp", "emailOtp"]);
-        if (step2Fields && otpSent) {
+        // Validate step 2: Both Mobile and Email OTPs must be verified
+        if (mobileOtpVerified && emailOtpVerified) {
           // Proceed with actual login
           await handleLogin();
           return;
         } else {
           toast({
-            title: "OTP Required",
-            description: "Please enter both mobile and email OTPs.",
+            title: "OTP Verification Required",
+            description: "Please verify both mobile and email OTPs to continue.",
             variant: "destructive",
           });
         }
@@ -363,7 +364,7 @@ export default function Login() {
               </div>
             </Form>
 
-            {/* Demo Account Buttons */}
+            {/* Demo Account Buttons - Commented out per user request
             <div className="space-y-4">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
@@ -410,7 +411,7 @@ export default function Login() {
                 </p>
               </div>
             </div>
-            
+            */}
           </div>
         );
 
@@ -431,42 +432,96 @@ export default function Login() {
             </div>
 
             <Form {...form}>
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {/* Mobile OTP */}
-                <FormField
-                  control={form.control}
-                  name="mobileOtp"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <MobileOTPInput
-                          value={field.value}
-                          onChange={field.onChange}
-                          disabled={isLoading}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="mobileOtp"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <MobileOTPInput
+                            value={field.value}
+                            onChange={field.onChange}
+                            disabled={isLoading}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="text-center px-4">
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        const mobileOtp = form.getValues("mobileOtp");
+                        if (mobileOtp === "123456") {
+                          setMobileOtpVerified(true);
+                          toast({
+                            title: "Mobile OTP Verified",
+                            description: "Mobile verification successful!",
+                          });
+                        } else {
+                          toast({
+                            title: "Invalid Mobile OTP",
+                            description: "Please enter the correct code.",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                      className={`w-full min-h-[48px] text-base font-medium ${mobileOtpVerified ? 'bg-green-600 hover:bg-green-700' : 'bg-navyblue hover:bg-darkblue'} text-white`}
+                      disabled={mobileOtpVerified || isLoading}
+                    >
+                      {mobileOtpVerified ? "✓ Mobile Verified" : "Verify Mobile OTP"}
+                    </Button>
+                  </div>
+                </div>
 
                 {/* Email OTP */}
-                <FormField
-                  control={form.control}
-                  name="emailOtp"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <EmailOTPInput
-                          value={field.value}
-                          onChange={field.onChange}
-                          disabled={isLoading}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="emailOtp"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <EmailOTPInput
+                            value={field.value}
+                            onChange={field.onChange}
+                            disabled={isLoading}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="text-center px-4">
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        const emailOtp = form.getValues("emailOtp");
+                        if (emailOtp === "123456") {
+                          setEmailOtpVerified(true);
+                          toast({
+                            title: "Email OTP Verified",
+                            description: "Email verification successful!",
+                          });
+                        } else {
+                          toast({
+                            title: "Invalid Email OTP",
+                            description: "Please enter the correct code.",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                      className={`w-full min-h-[48px] text-base font-medium ${emailOtpVerified ? 'bg-green-600 hover:bg-green-700' : 'bg-navyblue hover:bg-darkblue'} text-white`}
+                      disabled={emailOtpVerified || isLoading}
+                    >
+                      {emailOtpVerified ? "✓ Email Verified" : "Verify Email OTP"}
+                    </Button>
+                  </div>
+                </div>
               </div>
             </Form>
 

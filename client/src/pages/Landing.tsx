@@ -19,22 +19,22 @@ export default function Landing() {
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-white dark:text-gray-100 mb-8 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white dark:text-gray-100 mb-8 leading-tight">
               Building the Future,<br />
               <span className="text-goldenrod1 dark:text-yellow-400">Today</span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-200 dark:text-gray-300 mb-12 max-w-4xl mx-auto font-medium">
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-200 dark:text-gray-300 mb-12 max-w-4xl mx-auto font-medium">
               At HLSG Industries, we don't just envision the future—we build it
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/services">
-                <Button className="px-8 py-4 text-lg font-medium bg-goldenrod1 hover:bg-goldenrod2 text-white dark:bg-yellow-600 dark:hover:bg-yellow-700 rounded-lg transition-all duration-200 shadow-lg">
+                <Button className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium bg-goldenrod1 hover:bg-goldenrod2 text-white dark:bg-yellow-600 dark:hover:bg-yellow-700 rounded-lg transition-all duration-200 shadow-lg">
                   Explore Our Services
                 </Button>
               </Link>
               <Button
-                className="px-8 py-4 text-lg font-medium text-navyblue bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 rounded-lg transition-all duration-200 shadow-lg"
-                onClick={() => window.location.href = "/api/login"}
+                className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium text-navyblue bg-white hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 rounded-lg transition-all duration-200 shadow-lg"
+                onClick={() => window.location.href = "/login"}
               >
                 Get Started
               </Button>
@@ -47,12 +47,12 @@ export default function Landing() {
       <section className="py-16 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-navyblue dark:text-blue-400 mb-6">Our Services</h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navyblue dark:text-golden mb-6">Our Services</h2>
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
               Comprehensive solutions tailored to drive your business forward with cutting-edge technology and expert guidance.
             </p>
             <Link href="/services">
-              <Button className="px-8 py-4 text-lg font-medium bg-navyblue hover:bg-darkblue text-white dark:bg-blue-600 dark:hover:bg-blue-700 rounded-lg transition-all duration-200 shadow-lg">
+              <Button className="px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium bg-navyblue hover:bg-darkblue text-white dark:bg-golden dark:hover:bg-goldenrod1 dark:text-navyblue rounded-lg transition-all duration-200 shadow-lg">
                 View All Services
               </Button>
             </Link>
@@ -65,11 +65,11 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-navyblue dark:text-blue-400 mb-6">About HLSG Industries</h2>
-              <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-navyblue dark:text-golden mb-6">About HLSG Industries</h2>
+              <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 mb-6">
                 Founded with a vision to transform businesses through innovative solutions, HLSG Industries has been at the forefront of technological advancement and strategic business development.
               </p>
-              <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
+              <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 mb-8">
                 Our commitment to excellence and future-focused approach has made us a trusted partner for organizations seeking to navigate the complexities of modern business landscapes.
               </p>
               

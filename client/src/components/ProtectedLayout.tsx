@@ -52,7 +52,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
             {/* Logo */}
             <Link href="/">
               <span className="flex items-center cursor-pointer">
-                <div className="w-10 h-10 bg-gradient-to-r from-navyblue to-goldenrod1 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-navyblue dark:bg-golden rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-xl">H</span>
                 </div>
                 <span className="ml-3 text-xl font-bold text-navyblue">HLSG Industries</span>

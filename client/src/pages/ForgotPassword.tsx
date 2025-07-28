@@ -293,7 +293,7 @@ export default function ForgotPassword() {
                 name="loginId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email or Mobile Number *</FormLabel>
+                    <FormLabel className="text-navyblue dark:text-golden">Email or Mobile Number *</FormLabel>
                     <FormControl>
                       <Input 
                         {...field} 
@@ -471,7 +471,7 @@ export default function ForgotPassword() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New Password *</FormLabel>
+                    <FormLabel className="text-navyblue dark:text-golden">New Password *</FormLabel>
                     <FormControl>
                       <Input 
                         {...field} 
@@ -492,7 +492,7 @@ export default function ForgotPassword() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm New Password *</FormLabel>
+                    <FormLabel className="text-navyblue dark:text-golden">Confirm New Password *</FormLabel>
                     <FormControl>
                       <Input 
                         {...field} 

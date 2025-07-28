@@ -76,10 +76,10 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
             {/* Logo */}
             <Link href="/">
               <div className="flex items-center cursor-pointer">
-                <div className="w-10 h-10 bg-gradient-to-r from-navyblue to-goldenrod1 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-navyblue dark:bg-golden rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-xl">H</span>
                 </div>
-                <span className="ml-3 text-xl font-bold text-navyblue dark:text-golden">HLSG Industries</span>
+                <span className="ml-3 text-lg sm:text-xl font-bold text-navyblue dark:text-golden">HLSG Industries</span>
               </div>
             </Link>
 
@@ -115,7 +115,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+              <SheetContent side="right" className="w-[280px] sm:w-[350px]">
                 <div className="flex flex-col space-y-4 mt-8">
                   {navItems.map((item) => (
                     <div key={item.href}>
@@ -133,13 +133,18 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                       )}
                     </div>
                   ))}
-                  <div className="pt-4 border-t">
+                  <div className="pt-4 border-t space-y-3">
+                    {/* Theme Toggle for Mobile */}
+                    <div className="flex justify-center">
+                      <ThemeToggle />
+                    </div>
+                    
                     <Button
                       variant="outline"
                       className="w-full mb-2 border-navyblue text-navyblue hover:bg-navyblue hover:text-white dark:border-golden dark:text-golden dark:hover:bg-golden dark:hover:text-navyblue"
                       onClick={() => {
                         setIsMenuOpen(false);
-                        window.location.href = "/api/login";
+                        window.location.href = "/login";
                       }}
                     >
                       Login

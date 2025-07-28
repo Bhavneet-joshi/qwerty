@@ -53,7 +53,7 @@ const MobileOTPInput = ({ value, onChange, disabled }: { value: string; onChange
         </div>
         <p className="text-xs text-muted-foreground">Enter the 6-digit code sent to your mobile</p>
       </div>
-      <div className="flex justify-center space-x-2">
+      <div className="flex justify-center space-x-1 sm:space-x-2">
         {Array.from({ length: 6 }).map((_, index) => (
           <Input
             key={index}
@@ -64,7 +64,7 @@ const MobileOTPInput = ({ value, onChange, disabled }: { value: string; onChange
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             disabled={disabled}
-            className="w-12 h-12 text-center text-lg font-semibold border-2 border-green-200 focus:border-green-500 bg-green-50 dark:bg-green-950"
+            className="w-10 h-10 sm:w-12 sm:h-12 text-center text-lg font-semibold border-2 border-green-200 focus:border-green-500 bg-green-50 dark:bg-green-950"
           />
         ))}
       </div>
@@ -108,7 +108,7 @@ const EmailOTPInput = ({ value, onChange, disabled }: { value: string; onChange:
         </div>
         <p className="text-xs text-muted-foreground">Enter the 6-digit code sent to your email</p>
       </div>
-      <div className="flex justify-center space-x-2">
+      <div className="flex justify-center space-x-1 sm:space-x-2">
         {Array.from({ length: 6 }).map((_, index) => (
           <Input
             key={index}
@@ -119,7 +119,7 @@ const EmailOTPInput = ({ value, onChange, disabled }: { value: string; onChange:
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             disabled={disabled}
-            className="w-12 h-12 text-center text-lg font-semibold border-2 border-blue-200 focus:border-blue-500 bg-blue-50 dark:bg-blue-950"
+            className="w-10 h-10 sm:w-12 sm:h-12 text-center text-lg font-semibold border-2 border-blue-200 focus:border-blue-500 bg-blue-50 dark:bg-blue-950"
           />
         ))}
       </div>
@@ -498,7 +498,7 @@ export default function Register() {
                         </FormItem>
                       )}
                     />
-                    <div className="text-center">
+                    <div className="text-center px-4">
                       <Button
                         type="button"
                         onClick={() => {
@@ -517,7 +517,7 @@ export default function Register() {
                             });
                           }
                         }}
-                        className={`w-full ${mobileOtpVerified ? 'bg-green-600 hover:bg-green-700' : 'bg-navyblue hover:bg-darkblue'} text-white`}
+                        className={`w-full min-h-[48px] text-base font-medium ${mobileOtpVerified ? 'bg-green-600 hover:bg-green-700' : 'bg-navyblue hover:bg-darkblue'} text-white`}
                         disabled={mobileOtpVerified}
                       >
                         {mobileOtpVerified ? "✓ Mobile Verified" : "Verify Mobile OTP"}
@@ -543,7 +543,7 @@ export default function Register() {
                         </FormItem>
                       )}
                     />
-                    <div className="text-center">
+                    <div className="text-center px-4">
                       <Button
                         type="button"
                         onClick={() => {
@@ -562,7 +562,7 @@ export default function Register() {
                             });
                           }
                         }}
-                        className={`w-full ${emailOtpVerified ? 'bg-green-600 hover:bg-green-700' : 'bg-navyblue hover:bg-darkblue'} text-white`}
+                        className={`w-full min-h-[48px] text-base font-medium ${emailOtpVerified ? 'bg-green-600 hover:bg-green-700' : 'bg-navyblue hover:bg-darkblue'} text-white`}
                         disabled={emailOtpVerified}
                       >
                         {emailOtpVerified ? "✓ Email Verified" : "Verify Email OTP"}

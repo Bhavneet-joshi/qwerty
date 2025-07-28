@@ -23,10 +23,8 @@ export function ThemeToggle() {
       size="sm" 
       className={`
         relative w-10 h-10 rounded-full theme-button
-        bg-gradient-to-br from-gray-100 to-gray-200 
-        hover:from-gray-200 hover:to-gray-300
-        dark:from-gray-800 dark:to-gray-700 
-        dark:hover:from-gray-700 dark:hover:to-gray-600
+        bg-gray-100 hover:bg-gray-200
+        dark:bg-gray-800 dark:hover:bg-gray-700
         border border-gray-300 dark:border-gray-600
         shadow-sm hover:shadow-md
         transition-all duration-300 cubic-bezier(0.4, 0.0, 0.2, 1)
@@ -42,8 +40,8 @@ export function ThemeToggle() {
         <div className={`
           absolute inset-0 rounded-full transition-all duration-300
           ${theme === 'dark' 
-            ? 'bg-gradient-to-br from-blue-500/20 to-purple-500/20' 
-            : 'bg-gradient-to-br from-amber-400/20 to-orange-400/20'
+            ? 'bg-blue-500/20' 
+            : 'bg-amber-400/20'
           }
           ${isToggling ? 'scale-110 opacity-100' : 'scale-100 opacity-0'}
         `} />
