@@ -11,8 +11,9 @@ import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
-import AboutFounders from "@/pages/about/AboutFounders";
-import AboutCompany from "@/pages/about/AboutCompany";
+// Comment out individual about pages since we now have a single comprehensive About page
+// import AboutFounders from "@/pages/about/AboutFounders";
+// import AboutCompany from "@/pages/about/AboutCompany";
 import Services from "@/pages/Services";
 import Contact from "@/pages/Contact";
 import Policy from "@/pages/Policy";
@@ -59,8 +60,9 @@ function Router() {
           <Route path="/" component={Landing} />
           <Route path="/login" component={Login} />
           <Route path="/about" component={About} />
-          <Route path="/about/founders" component={AboutFounders} />
-          <Route path="/about/company" component={AboutCompany} />
+          {/* Comment out individual about routes since we now have a single comprehensive About page */}
+          {/* <Route path="/about/founders" component={AboutFounders} /> */}
+          {/* <Route path="/about/company" component={AboutCompany} /> */}
           <Route path="/services" component={Services} />
           <Route path="/contact" component={Contact} />
           <Route path="/policy" component={Policy} />

@@ -20,6 +20,10 @@ Code modification preference: Comment out code instead of deleting when making c
   - Standardized button colors throughout app - consistent navyblue/goldenrod1 palette
   - Fixed dark mode button inconsistencies - removed blue/yellow/white/black variations
   - All visual elements now use approved color palette per SOW UI requirements
+  - Converted About Us from dropdown navigation to single comprehensive page
+  - Merged AboutFounders and AboutCompany content into main About page
+  - Added interactive logo animation and comprehensive founder profiles
+  - Removed separate /about/founders and /about/company routes
 
 ## Previous Changes (January 27, 2025)
 

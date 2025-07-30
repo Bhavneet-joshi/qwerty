@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, ChevronDown } from "lucide-react";
+import { Menu } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 
 interface PublicLayoutProps {
@@ -15,44 +15,13 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 
   const navItems = [
     { href: "/", label: "Home" },
-    { 
-      href: "/about", 
-      label: "About Us",
-      dropdown: [
-        { href: "/about/founders", label: "About Founders" },
-        { href: "/about/company", label: "About Company" }
-      ]
-    },
+    { href: "/about", label: "About Us" },
     { href: "/services", label: "Services" },
     { href: "/contact", label: "Contact Us" },
     { href: "/policy", label: "Policy" },
   ];
 
-  const NavLink = ({ href, label, dropdown }: { href: string; label: string; dropdown?: { href: string; label: string }[] }) => {
-    if (dropdown) {
-      return (
-        <div className="relative group">
-          <Link href={href}>
-            <span className={`px-3 py-2 text-sm font-medium transition-all duration-200 cursor-pointer hover:text-navyblue flex items-center ${
-              location === href || dropdown.some(item => location === item.href) ? "text-navyblue dark:text-golden" : "text-gray-700 dark:text-gray-300"
-            }`}>
-              {label}
-              <ChevronDown className="ml-1 h-4 w-4" />
-            </span>
-          </Link>
-          <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-            {dropdown.map((item) => (
-              <Link key={item.href} href={item.href}>
-                <span className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-navyblue dark:hover:text-golden cursor-pointer">
-                  {item.label}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      );
-    }
-    
+  const NavLink = ({ href, label }: { href: string; label: string }) => {
     return (
       <Link href={href}>
         <span
@@ -86,7 +55,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-4">
               {navItems.map((item) => (
-                <NavLink key={item.href} href={item.href} label={item.label} dropdown={item.dropdown} />
+                <NavLink key={item.href} href={item.href} label={item.label} />
               ))}
             </div>
 
@@ -118,20 +87,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
               <SheetContent side="right" className="w-[280px] sm:w-[350px]">
                 <div className="flex flex-col space-y-4 mt-8">
                   {navItems.map((item) => (
-                    <div key={item.href}>
-                      <NavLink href={item.href} label={item.label} dropdown={item.dropdown} />
-                      {item.dropdown && (
-                        <div className="ml-4 mt-2 space-y-2">
-                          {item.dropdown.map((subItem) => (
-                            <Link key={subItem.href} href={subItem.href}>
-                              <span className="block px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-navyblue dark:hover:text-golden cursor-pointer" onClick={() => setIsMenuOpen(false)}>
-                                {subItem.label}
-                              </span>
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                    <NavLink key={item.href} href={item.href} label={item.label} />
                   ))}
                   <div className="pt-4 border-t space-y-3">
                     {/* Theme Toggle for Mobile */}
