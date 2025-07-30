@@ -152,7 +152,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
         {/* Main Footer Content - Fixed mobile sizing as requested in July 20th feedback */}
         <div className="py-8 sm:py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {/* Company Logo and Description */}
               <div className="sm:col-span-2 lg:col-span-1">
                 <div className="mb-4 sm:mb-6">
@@ -176,12 +176,12 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
               <div className="lg:col-span-1">
                 <h3 className="text-lg font-semibold text-white mb-6 uppercase">QUICK LINKS</h3>
                 <ul className="space-y-3">
-                  <li><Link href="/about"><span className="text-gray-300 hover:text-orange-400 transition-colors duration-200 cursor-pointer text-sm">Careers</span></Link></li>
-                  <li><Link href="/about"><span className="text-gray-300 hover:text-orange-400 transition-colors duration-200 cursor-pointer text-sm">Results</span></Link></li>
-                  <li><Link href="/services"><span className="text-gray-300 hover:text-orange-400 transition-colors duration-200 cursor-pointer text-sm">Prev</span></Link></li>
-                  <li><a href="#" className="text-gray-300 hover:text-orange-400 transition-colors duration-200 text-sm">Online Testing</a></li>
+                  <li><Link href="/"><span className="text-gray-300 hover:text-orange-400 transition-colors duration-200 cursor-pointer text-sm">Home</span></Link></li>
                   <li><Link href="/about"><span className="text-gray-300 hover:text-orange-400 transition-colors duration-200 cursor-pointer text-sm">About</span></Link></li>
+                  <li><Link href="/services"><span className="text-gray-300 hover:text-orange-400 transition-colors duration-200 cursor-pointer text-sm">Services</span></Link></li>
                   <li><Link href="/contact"><span className="text-gray-300 hover:text-orange-400 transition-colors duration-200 cursor-pointer text-sm">Contact</span></Link></li>
+                  <li><Link href="/policy"><span className="text-gray-300 hover:text-orange-400 transition-colors duration-200 cursor-pointer text-sm">Privacy Policy</span></Link></li>
+                  <li><a href="#sitemap" className="text-gray-300 hover:text-orange-400 transition-colors duration-200 text-sm">Site Map</a></li>
                 </ul>
               </div>
 
@@ -202,45 +202,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                 </div>
               </div>
 
-              {/* Location on Map */}
-              <div className="sm:col-span-2 lg:col-span-1">
-                <h3 className="text-base sm:text-lg font-semibold text-white mb-4 sm:mb-6 uppercase">LOCATION ON MAP</h3>
-                <div className="bg-gray-100 rounded-lg overflow-hidden h-32 sm:h-48">
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center relative">
-                    {/* Google Maps-like interface */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-green-100 to-blue-100">
-                      {/* Streets overlay */}
-                      <div className="absolute inset-0 opacity-30">
-                        <div className="absolute top-4 left-0 w-full h-0.5 bg-gray-400"></div>
-                        <div className="absolute top-8 left-0 w-full h-0.5 bg-gray-400"></div>
-                        <div className="absolute top-16 left-0 w-full h-0.5 bg-gray-400"></div>
-                        <div className="absolute left-8 top-0 h-full w-0.5 bg-gray-400"></div>
-                        <div className="absolute left-16 top-0 h-full w-0.5 bg-gray-400"></div>
-                      </div>
-                      
-                      {/* Location marker */}
-                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                        <div className="w-6 h-6 bg-red-500 rounded-full border-2 border-white shadow-lg flex items-center justify-center">
-                          <div className="w-2 h-2 bg-white rounded-full"></div>
-                        </div>
-                      </div>
-                      
-                      {/* Map controls */}
-                      <div className="absolute top-2 right-2 flex flex-col space-y-1">
-                        <div className="w-6 h-6 bg-white rounded shadow flex items-center justify-center text-xs">+</div>
-                        <div className="w-6 h-6 bg-white rounded shadow flex items-center justify-center text-xs">-</div>
-                      </div>
-                      
-                      {/* View larger map link */}
-                      <div className="absolute bottom-2 right-2">
-                        <a href="#" className="text-xs bg-white px-2 py-1 rounded shadow text-blue-600 hover:underline">
-                          View larger map
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+
             </div>
           </div>
         </div>
