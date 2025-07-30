@@ -27,6 +27,11 @@ Code modification preference: Comment out code instead of deleting when making c
   - Fixed Contact Us page: improved map embed URL, standardized button colors
   - Enhanced mobile responsiveness for map controls and buttons
   - Added map fallback content for better user experience
+  - Restored Policy page missing sections: Download Policy, Questions Section, and Policy Toggle
+  - Added functional policy document download in PDF and text formats
+  - Implemented Simple/Detailed view toggle with accordion and horizontal layouts
+  - Added comprehensive FAQ section with 6 common privacy and terms questions
+  - All policy page elements now use consistent goldenrod1/navyblue color scheme
 
 ## Previous Changes (January 27, 2025)
 
