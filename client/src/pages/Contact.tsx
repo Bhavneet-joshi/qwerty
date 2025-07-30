@@ -324,7 +324,7 @@ export default function Contact() {
                         <Button 
                           type="submit" 
                           disabled={isSubmitting}
-                          className="w-full bg-golden hover:bg-goldenrod1 text-navyblue font-semibold py-3 text-lg transition-colors duration-200"
+                          className="w-full bg-goldenrod1 hover:bg-goldenrod2 text-navyblue dark:bg-goldenrod1 dark:hover:bg-goldenrod2 dark:text-navyblue font-semibold py-3 text-lg transition-colors duration-200"
                         >
                           {isSubmitting ? "Sending..." : "Send Message"}
                         </Button>
@@ -349,18 +349,37 @@ export default function Contact() {
             
             <div className="bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden shadow-lg">
               {/* Interactive Map - Embedded Google Maps */}
-              <div className="relative h-96">
+              <div className="relative h-64 sm:h-80 lg:h-96">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3503.0157842146894!2d77.36568731455415!3d28.624567582421658!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce5a43173357b%3A0x37ffce30c87cc03f!2sSector%2062%2C%20Noida%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1643234567890!5m2!1sen!2sin"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.9956633286047!2d77.36465677616468!3d28.62472027567147!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce5a43173357b%3A0x37ffce30c87cc03f!2sSector%2062%2C%20Noida%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1675234567890!5m2!1sen!2sin"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
                   allowFullScreen
-                  loading="lazy"
+                  loading="eager"
                   referrerPolicy="no-referrer-when-downgrade"
                   title="HLSG Industries Location - Sector 62, Noida"
                   className="w-full h-full"
+                  onLoad={() => console.log("Map loaded successfully")}
+                  onError={(e) => console.error("Map failed to load:", e)}
                 ></iframe>
+                
+                {/* Fallback content in case map doesn't load */}
+                <div className="absolute inset-0 bg-gray-200 dark:bg-gray-600 flex items-center justify-center opacity-0 transition-opacity duration-300 pointer-events-none" id="map-fallback">
+                  <div className="text-center p-8">
+                    <MapPin className="h-16 w-16 text-goldenrod1 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">Map Loading...</h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-4">
+                      If the map doesn't load, click the button below to view our location.
+                    </p>
+                    <Button 
+                      className="bg-goldenrod1 hover:bg-goldenrod2 text-navyblue"
+                      onClick={() => window.open('https://maps.google.com/?q=Sector+62+Noida+Uttar+Pradesh', '_blank')}
+                    >
+                      View on Google Maps
+                    </Button>
+                  </div>
+                </div>
                 
                 {/* Overlay with company information */}
                 <div className="absolute top-4 left-4 bg-white/95 dark:bg-gray-800/95 rounded-lg shadow-lg p-4 max-w-sm">
@@ -385,30 +404,30 @@ export default function Contact() {
               
               {/* Map Controls */}
               <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-600">
-                <div className="flex justify-between items-center">
-                  <div className="flex space-x-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div className="flex flex-wrap gap-2 sm:gap-4">
                     <button 
                       onClick={() => window.open('https://maps.google.com/?q=Sector+62+Noida+Uttar+Pradesh&t=k', '_blank')}
-                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-goldenrod1 transition-colors"
+                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-goldenrod1 transition-colors px-2 py-1"
                     >
                       Satellite View
                     </button>
                     <button 
                       onClick={() => window.open('https://maps.google.com/?q=Sector+62+Noida+Uttar+Pradesh&layer=c&cbll=28.624567,77.365687', '_blank')}
-                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-goldenrod1 transition-colors"
+                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-goldenrod1 transition-colors px-2 py-1"
                     >
                       Street View
                     </button>
                     <button 
                       onClick={() => window.open('https://maps.google.com/maps/dir//Sector+62+Noida+Uttar+Pradesh', '_blank')}
-                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-goldenrod1 transition-colors"
+                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-goldenrod1 transition-colors px-2 py-1"
                     >
                       Get Directions
                     </button>
                   </div>
                   <Button 
                     size="sm"
-                    className="bg-goldenrod1 hover:bg-goldenrod2 text-navyblue dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:text-white"
+                    className="bg-goldenrod1 hover:bg-goldenrod2 text-navyblue dark:bg-goldenrod1 dark:hover:bg-goldenrod2 dark:text-navyblue w-full sm:w-auto"
                     onClick={() => window.open('https://maps.google.com/?q=Sector+62+Noida+Uttar+Pradesh', '_blank')}
                   >
                     Open in Google Maps

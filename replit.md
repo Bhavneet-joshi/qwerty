@@ -24,6 +24,9 @@ Code modification preference: Comment out code instead of deleting when making c
   - Merged AboutFounders and AboutCompany content into main About page
   - Added interactive logo animation and comprehensive founder profiles
   - Removed separate /about/founders and /about/company routes
+  - Fixed Contact Us page: improved map embed URL, standardized button colors
+  - Enhanced mobile responsiveness for map controls and buttons
+  - Added map fallback content for better user experience
 
 ## Previous Changes (January 27, 2025)
 
