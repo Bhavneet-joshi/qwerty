@@ -7,6 +7,7 @@ This is a full-stack contract management system built with React, Express.js, an
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Code modification preference: Comment out code instead of deleting when making changes.
 
 ## Recent Changes (January 27, 2025)
 
