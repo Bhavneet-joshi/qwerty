@@ -96,13 +96,13 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
               <Link href="/login">
                 <Button
                   variant="outline"
-                  className="border-navyblue text-navyblue hover:bg-navyblue hover:text-white dark:border-golden dark:text-golden dark:hover:bg-golden dark:hover:text-navyblue"
+                  className="border-navyblue text-navyblue hover:bg-navyblue hover:text-white dark:border-navyblue dark:text-navyblue dark:hover:bg-navyblue dark:hover:text-white"
                 >
                   Login
                 </Button>
               </Link>
               <Link href="/register">
-                <Button className="bg-navyblue hover:bg-darkblue text-white dark:bg-golden dark:hover:bg-goldenrod1 dark:text-navyblue">
+                <Button className="bg-goldenrod1 hover:bg-goldenrod2 text-navyblue dark:bg-goldenrod1 dark:hover:bg-goldenrod2 dark:text-navyblue">
                   Register
                 </Button>
               </Link>
@@ -141,7 +141,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                     
                     <Button
                       variant="outline"
-                      className="w-full mb-2 border-navyblue text-navyblue hover:bg-navyblue hover:text-white dark:border-golden dark:text-golden dark:hover:bg-golden dark:hover:text-navyblue"
+                      className="w-full mb-2 border-navyblue text-navyblue hover:bg-navyblue hover:text-white dark:border-navyblue dark:text-navyblue dark:hover:bg-navyblue dark:hover:text-white"
                       onClick={() => {
                         setIsMenuOpen(false);
                         window.location.href = "/login";
@@ -150,7 +150,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                       Login
                     </Button>
                     <Link href="/register">
-                      <Button className="w-full bg-navyblue hover:bg-darkblue text-white dark:bg-golden dark:hover:bg-goldenrod1 dark:text-navyblue" onClick={() => setIsMenuOpen(false)}>
+                      <Button className="w-full bg-goldenrod1 hover:bg-goldenrod2 text-navyblue dark:bg-goldenrod1 dark:hover:bg-goldenrod2 dark:text-navyblue" onClick={() => setIsMenuOpen(false)}>
                         Register
                       </Button>
                     </Link>
@@ -193,13 +193,13 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
           </div>
         </div>
 
-        {/* Main Footer Content */}
-        <div className="py-12">
+        {/* Main Footer Content - Fixed mobile sizing as requested in July 20th feedback */}
+        <div className="py-8 sm:py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
               {/* Company Logo and Description */}
-              <div className="lg:col-span-1">
-                <div className="mb-6">
+              <div className="sm:col-span-2 lg:col-span-1">
+                <div className="mb-4 sm:mb-6">
                   <div className="flex items-center mb-4">
                     <div className="w-12 h-12 bg-gradient-to-r from-navyblue to-goldenrod1 rounded-lg flex items-center justify-center mr-3">
                       <span className="text-white font-bold text-xl">H</span>
@@ -210,7 +210,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                       <p className="text-xs text-orange-400">BUSINESS INTELLIGENCE</p>
                     </div>
                   </div>
-                  <p className="text-sm text-gray-300 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
                     HLSG INDUSTRIES offers comprehensive contract management solutions and business intelligence services for enterprises. Our platform provides streamlined workflows for document management, stakeholder collaboration, and compliance tracking. Led by experienced professionals who focus on delivering excellence.
                   </p>
                 </div>
@@ -247,9 +247,9 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
               </div>
 
               {/* Location on Map */}
-              <div className="lg:col-span-1">
-                <h3 className="text-lg font-semibold text-white mb-6 uppercase">LOCATION ON MAP</h3>
-                <div className="bg-gray-100 rounded-lg overflow-hidden h-48">
+              <div className="sm:col-span-2 lg:col-span-1">
+                <h3 className="text-base sm:text-lg font-semibold text-white mb-4 sm:mb-6 uppercase">LOCATION ON MAP</h3>
+                <div className="bg-gray-100 rounded-lg overflow-hidden h-32 sm:h-48">
                   <div className="w-full h-full bg-gray-200 flex items-center justify-center relative">
                     {/* Google Maps-like interface */}
                     <div className="absolute inset-0 bg-gradient-to-br from-green-100 to-blue-100">
