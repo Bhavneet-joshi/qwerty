@@ -18,7 +18,7 @@ import { useToast } from "@/hooks/use-toast";
 type RegisterFormData = z.infer<typeof registerUserSchema>;
 
 // Mobile OTP Input Component
-const MobileOTPInput = ({ value, onChange, disabled }: { value: string; onChange: (value: string) => void; disabled: boolean }) => {
+const MobileOTPInput = ({ value, onChange, disabled, hasError }: { value: string; onChange: (value: string) => void; disabled: boolean; hasError?: boolean }) => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   
   useEffect(() => {
@@ -48,10 +48,10 @@ const MobileOTPInput = ({ value, onChange, disabled }: { value: string; onChange
     <div className="space-y-4">
       <div className="text-center">
         <div className="flex items-center justify-center mb-2">
-          <Phone className="w-5 h-5 text-green-600 mr-2" />
-          <span className="text-sm font-medium text-green-600">Mobile OTP</span>
+          <Phone className="w-5 h-5 text-navyblue dark:text-goldenrod1 mr-2" />
+          <span className="text-sm font-medium text-navyblue dark:text-goldenrod1">Mobile OTP</span>
         </div>
-        <p className="text-xs text-muted-foreground">Enter the 6-digit code sent to your mobile</p>
+        <p className="text-xs text-gray-600 dark:text-gray-400">Enter the 6-digit code sent to your mobile</p>
       </div>
       <div className="flex justify-center space-x-1 sm:space-x-2">
         {Array.from({ length: 6 }).map((_, index) => (
@@ -64,7 +64,11 @@ const MobileOTPInput = ({ value, onChange, disabled }: { value: string; onChange
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             disabled={disabled}
-            className="w-10 h-10 sm:w-12 sm:h-12 text-center text-lg font-semibold border-2 border-green-200 focus:border-green-500 bg-green-50 dark:bg-green-950"
+            className={`w-10 h-10 sm:w-12 sm:h-12 text-center text-lg font-semibold border-2 ${
+              hasError 
+                ? 'border-red-500 bg-red-50 dark:border-red-500 dark:bg-red-950/20' 
+                : 'border-goldenrod1 focus:border-navyblue bg-goldenrod1/10 dark:border-goldenrod1 dark:focus:border-goldenrod1 dark:bg-goldenrod1/5'
+            }`}
           />
         ))}
       </div>
@@ -73,7 +77,7 @@ const MobileOTPInput = ({ value, onChange, disabled }: { value: string; onChange
 };
 
 // Email OTP Input Component
-const EmailOTPInput = ({ value, onChange, disabled }: { value: string; onChange: (value: string) => void; disabled: boolean }) => {
+const EmailOTPInput = ({ value, onChange, disabled, hasError }: { value: string; onChange: (value: string) => void; disabled: boolean; hasError?: boolean }) => {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   
   useEffect(() => {
@@ -103,10 +107,10 @@ const EmailOTPInput = ({ value, onChange, disabled }: { value: string; onChange:
     <div className="space-y-4">
       <div className="text-center">
         <div className="flex items-center justify-center mb-2">
-          <Mail className="w-5 h-5 text-blue-600 mr-2" />
-          <span className="text-sm font-medium text-blue-600">Email OTP</span>
+          <Mail className="w-5 h-5 text-navyblue dark:text-goldenrod1 mr-2" />
+          <span className="text-sm font-medium text-navyblue dark:text-goldenrod1">Email OTP</span>
         </div>
-        <p className="text-xs text-muted-foreground">Enter the 6-digit code sent to your email</p>
+        <p className="text-xs text-gray-600 dark:text-gray-400">Enter the 6-digit code sent to your email</p>
       </div>
       <div className="flex justify-center space-x-1 sm:space-x-2">
         {Array.from({ length: 6 }).map((_, index) => (
@@ -119,7 +123,11 @@ const EmailOTPInput = ({ value, onChange, disabled }: { value: string; onChange:
             onChange={(e) => handleChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             disabled={disabled}
-            className="w-10 h-10 sm:w-12 sm:h-12 text-center text-lg font-semibold border-2 border-blue-200 focus:border-blue-500 bg-blue-50 dark:bg-blue-950"
+            className={`w-10 h-10 sm:w-12 sm:h-12 text-center text-lg font-semibold border-2 ${
+              hasError 
+                ? 'border-red-500 bg-red-50 dark:border-red-500 dark:bg-red-950/20' 
+                : 'border-goldenrod1 focus:border-navyblue bg-goldenrod1/10 dark:border-goldenrod1 dark:focus:border-goldenrod1 dark:bg-goldenrod1/5'
+            }`}
           />
         ))}
       </div>
@@ -142,6 +150,9 @@ export default function Register() {
   const [countdown, setCountdown] = useState(0);
   const [mobileOtpVerified, setMobileOtpVerified] = useState(false);
   const [emailOtpVerified, setEmailOtpVerified] = useState(false);
+  const [mobileOtpError, setMobileOtpError] = useState(false);
+  const [emailOtpError, setEmailOtpError] = useState(false);
+  const [verificationAttempts, setVerificationAttempts] = useState({ mobile: 0, email: 0 });
   const { toast } = useToast();
   
   const form = useForm<RegisterFormData>({
@@ -192,6 +203,13 @@ export default function Register() {
     // Simulate OTP sending
     setOtpSent(true);
     setCountdown(30);
+    setMobileOtpVerified(false);
+    setEmailOtpVerified(false);
+    setMobileOtpError(false);
+    setEmailOtpError(false);
+    setVerificationAttempts({ mobile: 0, email: 0 });
+    form.setValue("mobileOtp", "");
+    form.setValue("emailOtp", "");
     
     const timer = setInterval(() => {
       setCountdown((prev) => {
@@ -490,8 +508,12 @@ export default function Register() {
                           <FormControl>
                             <MobileOTPInput 
                               value={field.value}
-                              onChange={field.onChange}
+                              onChange={(value) => {
+                                field.onChange(value);
+                                setMobileOtpError(false); // Clear error when user types
+                              }}
                               disabled={false}
+                              hasError={mobileOtpError}
                             />
                           </FormControl>
                           <FormMessage />
@@ -503,21 +525,44 @@ export default function Register() {
                         type="button"
                         onClick={() => {
                           const mobileOtp = form.getValues("mobileOtp");
+                          const attempts = verificationAttempts.mobile + 1;
+                          setVerificationAttempts(prev => ({ ...prev, mobile: attempts }));
+                          
+                          if (mobileOtp.length !== 6) {
+                            setMobileOtpError(true);
+                            toast({
+                              title: "Invalid Mobile OTP",
+                              description: "Please enter a complete 6-digit code.",
+                              variant: "destructive",
+                            });
+                            return;
+                          }
+                          
                           if (mobileOtp === "123456") {
                             setMobileOtpVerified(true);
+                            setMobileOtpError(false);
                             toast({
                               title: "Mobile OTP Verified",
                               description: "Mobile verification successful!",
                             });
                           } else {
-                            toast({
-                              title: "Invalid Mobile OTP",
-                              description: "Please enter the correct code.",
-                              variant: "destructive",
-                            });
+                            setMobileOtpError(true);
+                            if (attempts >= 3) {
+                              toast({
+                                title: "Too Many Attempts",
+                                description: "Maximum verification attempts reached. Please request a new OTP.",
+                                variant: "destructive",
+                              });
+                            } else {
+                              toast({
+                                title: "Invalid Mobile OTP",
+                                description: `Please enter the correct verification code. ${3 - attempts} attempts remaining.`,
+                                variant: "destructive",
+                              });
+                            }
                           }
                         }}
-                        className={`w-full min-h-[48px] text-base font-medium ${mobileOtpVerified ? 'bg-green-600 hover:bg-green-700' : 'bg-navyblue hover:bg-darkblue'} text-white`}
+                        className={`w-full min-h-[48px] text-base font-medium ${mobileOtpVerified ? 'bg-goldenrod1 hover:bg-goldenrod2 text-navyblue' : 'bg-navyblue hover:bg-darkblue text-white dark:bg-goldenrod1 dark:hover:bg-goldenrod2 dark:text-navyblue'}`}
                         disabled={mobileOtpVerified}
                       >
                         {mobileOtpVerified ? "✓ Mobile Verified" : "Verify Mobile OTP"}
@@ -535,8 +580,12 @@ export default function Register() {
                           <FormControl>
                             <EmailOTPInput 
                               value={field.value}
-                              onChange={field.onChange}
+                              onChange={(value) => {
+                                field.onChange(value);
+                                setEmailOtpError(false); // Clear error when user types
+                              }}
                               disabled={false}
+                              hasError={emailOtpError}
                             />
                           </FormControl>
                           <FormMessage />
@@ -548,21 +597,44 @@ export default function Register() {
                         type="button"
                         onClick={() => {
                           const emailOtp = form.getValues("emailOtp");
+                          const attempts = verificationAttempts.email + 1;
+                          setVerificationAttempts(prev => ({ ...prev, email: attempts }));
+                          
+                          if (emailOtp.length !== 6) {
+                            setEmailOtpError(true);
+                            toast({
+                              title: "Invalid Email OTP",
+                              description: "Please enter a complete 6-digit code.",
+                              variant: "destructive",
+                            });
+                            return;
+                          }
+                          
                           if (emailOtp === "123456") {
                             setEmailOtpVerified(true);
+                            setEmailOtpError(false);
                             toast({
                               title: "Email OTP Verified",
                               description: "Email verification successful!",
                             });
                           } else {
-                            toast({
-                              title: "Invalid Email OTP",
-                              description: "Please enter the correct code.",
-                              variant: "destructive",
-                            });
+                            setEmailOtpError(true);
+                            if (attempts >= 3) {
+                              toast({
+                                title: "Too Many Attempts",
+                                description: "Maximum verification attempts reached. Please request a new OTP.",
+                                variant: "destructive",
+                              });
+                            } else {
+                              toast({
+                                title: "Invalid Email OTP",
+                                description: `Please enter the correct verification code. ${3 - attempts} attempts remaining.`,
+                                variant: "destructive",
+                              });
+                            }
                           }
                         }}
-                        className={`w-full min-h-[48px] text-base font-medium ${emailOtpVerified ? 'bg-green-600 hover:bg-green-700' : 'bg-navyblue hover:bg-darkblue'} text-white`}
+                        className={`w-full min-h-[48px] text-base font-medium ${emailOtpVerified ? 'bg-goldenrod1 hover:bg-goldenrod2 text-navyblue' : 'bg-navyblue hover:bg-darkblue text-white dark:bg-goldenrod1 dark:hover:bg-goldenrod2 dark:text-navyblue'}`}
                         disabled={emailOtpVerified}
                       >
                         {emailOtpVerified ? "✓ Email Verified" : "Verify Email OTP"}
@@ -589,9 +661,7 @@ export default function Register() {
                       </Button>
                     )}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    Test OTP: <strong>123456</strong> for both mobile and email
-                  </div>
+
                 </div>
               </div>
             )}
